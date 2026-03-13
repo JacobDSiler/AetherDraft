@@ -342,6 +342,79 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--deep);color:#F
 #czoom-actions{display:flex;gap:8px;padding:12px 18px 16px;
   background:rgba(0,0,0,.35);border-top:1px solid rgba(200,149,42,.12);}
 #czoom-actions .btn{flex:1;font-size:10px;padding:8px 6px;letter-spacing:1px;}
+
+/* ── AUDIO CONTROLS ── */
+#audio-ctrl{display:flex;align-items:center;gap:10px;padding:4px 12px;
+  background:rgba(14,9,3,.95);border:1px solid rgba(200,149,42,.18);border-radius:3px;}
+.ac-lbl{font-family:'Josefin Sans',sans-serif;font-size:8px;letter-spacing:2px;
+  text-transform:uppercase;color:rgba(200,149,42,.5);white-space:nowrap;}
+.ac-group{display:flex;align-items:center;gap:5px;}
+.ac-mute{background:none;border:1px solid rgba(200,149,42,.25);border-radius:2px;
+  color:rgba(200,149,42,.6);font-size:12px;cursor:pointer;padding:2px 6px;
+  transition:all .18s;line-height:1;}
+.ac-mute:hover{border-color:var(--gold);color:var(--gold);}
+.ac-mute.muted{color:rgba(240,228,200,.2);border-color:rgba(200,149,42,.1);}
+input[type=range].ac-slider{
+  -webkit-appearance:none;appearance:none;
+  width:70px;height:3px;border-radius:2px;
+  background:rgba(200,149,42,.2);outline:none;cursor:pointer;}
+input[type=range].ac-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:12px;height:12px;border-radius:50%;
+  background:var(--brass);border:none;cursor:pointer;transition:transform .15s;}
+input[type=range].ac-slider::-webkit-slider-thumb:hover{transform:scale(1.3);}
+
+/* ── COMMIT LOG ── */
+#commit-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.88);
+  backdrop-filter:blur(8px);display:none;align-items:flex-start;justify-content:center;
+  padding:40px 20px;overflow-y:auto;}
+#commit-overlay.on{display:flex;}
+#commit-panel{width:100%;max-width:680px;
+  background:linear-gradient(160deg,rgba(22,14,6,.99),rgba(10,6,2,1));
+  border:1px solid rgba(200,149,42,.35);border-radius:4px;padding:32px 36px;
+  position:relative;}
+#commit-close{position:absolute;top:14px;right:16px;background:none;
+  border:1px solid rgba(200,149,42,.25);border-radius:2px;color:rgba(200,149,42,.5);
+  font-size:13px;cursor:pointer;padding:3px 9px;transition:all .18s;}
+#commit-close:hover{border-color:var(--gold);color:var(--gold);}
+.cl-title{font-family:'Cinzel Decorative',cursive;font-size:16px;
+  background:linear-gradient(90deg,var(--gold),var(--brass));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:20px;}
+.commit{border:1px solid rgba(200,149,42,.15);border-radius:3px;
+  margin-bottom:14px;overflow:hidden;}
+.commit-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:rgba(200,149,42,.06);
+  border-bottom:1px solid rgba(200,149,42,.12);gap:10px;}
+.commit-tag{font-family:'Josefin Sans',sans-serif;font-size:8px;letter-spacing:2px;
+  text-transform:uppercase;padding:2px 7px;border-radius:1px;flex-shrink:0;}
+.commit-tag.feat{background:rgba(122,191,111,.15);color:#7ABF6F;border:1px solid rgba(122,191,111,.3);}
+.commit-tag.fix{background:rgba(255,107,53,.15);color:var(--sul);border:1px solid rgba(255,107,53,.3);}
+.commit-tag.refactor{background:rgba(184,158,208,.15);color:var(--mer);border:1px solid rgba(184,158,208,.3);}
+.commit-tag.design{background:rgba(74,127,165,.15);color:var(--sky);border:1px solid rgba(74,127,165,.3);}
+.commit-msg{font-family:'Cinzel',serif;font-size:12px;font-weight:700;
+  color:var(--gold);flex:1;}
+.commit-hash{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:1px;
+  color:rgba(200,149,42,.35);flex-shrink:0;}
+.commit-body{padding:12px 14px;}
+.commit-desc{font-size:12px;line-height:1.75;color:rgba(240,228,200,.6);margin-bottom:10px;}
+.commit-files{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.commit-file{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:1px;
+  text-transform:uppercase;padding:2px 7px;border-radius:1px;
+  background:rgba(200,149,42,.08);border:1px solid rgba(200,149,42,.18);
+  color:rgba(200,149,42,.5);}
+.copy-row{display:flex;gap:6px;}
+.copy-btn{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;padding:5px 12px;border:1px solid rgba(200,149,42,.3);
+  background:rgba(22,14,6,.9);color:rgba(200,149,42,.7);cursor:pointer;
+  border-radius:2px;transition:all .18s;display:flex;align-items:center;gap:5px;}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(200,149,42,.1);}
+.copy-btn.copied{border-color:#7ABF6F;color:#7ABF6F;}
+.commit-btn-wrap{display:flex;justify-content:center;margin-top:6px;}
+#btn-open-commits{font-family:'Josefin Sans',sans-serif;font-size:8px;letter-spacing:2px;
+  text-transform:uppercase;padding:3px 9px;border:1px solid rgba(200,149,42,.2);
+  background:none;color:rgba(200,149,42,.4);cursor:pointer;border-radius:2px;
+  transition:all .18s;}
+#btn-open-commits:hover{border-color:rgba(200,149,42,.5);color:rgba(200,149,42,.8);}
 </style>
 </head>
 <body>
@@ -351,8 +424,28 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--deep);color:#F
   <!-- HEADER -->
   <div id="hdr">
     <div><div id="hdr-logo">AETHERDRAFT</div><div id="hdr-sub">Sky Bridge Saga · Embers</div></div>
-    <div class="hdr-mid"><div id="phase-lbl">Your Turn</div><div id="round-lbl">Round 1 · Draw Phase</div></div>
-    <div class="hdr-right"><div id="round-word">Round</div><div id="round-big">1</div></div>
+    <div class="hdr-mid"><div id="phase-lbl">Your Turn</div><div id="round-lbl">Round 1 · Draw Phase</div>
+      <div class="commit-btn-wrap" style="margin-top:4px;">
+        <button id="btn-open-commits" onclick="openCommits()">⎇ Changelog</button>
+      </div>
+    </div>
+    <div class="hdr-right" style="display:flex;align-items:center;gap:10px;">
+      <div id="audio-ctrl">
+        <div class="ac-group">
+          <button class="ac-mute" id="btn-mute-music" onclick="toggleMusic()" title="Mute Music">♪</button>
+          <span class="ac-lbl">Music</span>
+          <input type="range" class="ac-slider" id="slider-music" min="0" max="100" value="70"
+            oninput="setMusicVol(this.value/100)">
+        </div>
+        <div class="ac-group">
+          <button class="ac-mute" id="btn-mute-sfx" onclick="toggleSfx()" title="Mute SFX">⚡</button>
+          <span class="ac-lbl">SFX</span>
+          <input type="range" class="ac-slider" id="slider-sfx" min="0" max="100" value="80"
+            oninput="setSfxVol(this.value/100)">
+        </div>
+      </div>
+      <div style="text-align:right;"><div id="round-word">Round</div><div id="round-big">1</div></div>
+    </div>
   </div>
 
   <!-- BOARD -->
@@ -461,6 +554,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--deep);color:#F
     <div id="hint">Draw cards to begin your turn.</div>
   </div>
 
+</div>
+
+<!-- COMMIT LOG -->
+<div id="commit-overlay" onclick="closeCommits()">
+  <div id="commit-panel" onclick="event.stopPropagation()">
+    <button id="commit-close" onclick="closeCommits()">✕ Close</button>
+    <div class="cl-title">⎇ Aetherdraft Changelog</div>
+    <div id="commit-list"></div>
+  </div>
 </div>
 
 <!-- CARD ZOOM -->
@@ -759,7 +861,7 @@ function init() {
     Gain elements through <strong>Transmutation</strong> — sacrifice a card from your hand to extract its element.<br><br>
     Your <strong>Decoy Work</strong> sits beside it face-down. Advance it to mislead your opponent.<br><br>
     <em style="color:rgba(240,228,200,.45)">Stage I: ${P().realWork.stages[0].desc}</em>`,
-    [{text:'Begin the Work',fn:'closeModal()'}]);
+    [{text:'Begin the Work', fn:closeModal}]);
 }
 
 function costStr(costObj) {
@@ -810,6 +912,8 @@ function setPhase(ph) {
 // ═══════════════════════════════════════════
 function doDraw() {
   if(G.turn!==HUMAN||G.drawnThisTurn) return;
+  Audio.wake();
+  Audio.draw();
   drawCard(P(),2);
   G.drawnThisTurn=true;
   const bonus = P().field.filter(c=>c.effect==='aether_gen').length;
@@ -931,13 +1035,19 @@ function zoomPlay() {
 function zoomTransmute() {
   if(!zoomedCardUid) return;
   const card = P().hand.find(c=>c.uid===zoomedCardUid);
-  if(!card) return;
+  if(!card){ closeZoom(); return; }
+  if(G.transmuteUsed){ closeZoom(); setHint('Transmutation already used this turn.'); return; }
+  if(P().elements[card.suit] >= MAX_ELEM){ closeZoom(); setHint(`${SN[card.suit]} is already at cap (${MAX_ELEM}).`); return; }
+
   closeZoom();
-  // Start transmute mode and pre-select this card
-  G.txMode = true; G.txCard = zoomedCardUid;
-  document.getElementById('tx-panel').style.display = 'block';
-  document.getElementById('tx-hint').style.display = 'inline';
-  selectForTransmute(zoomedCardUid);
+  // Pre-open transmute panel with this card already selected
+  G.txMode=true;
+  G.txCard=card.uid;
+  document.getElementById('tx-panel').style.display='block';
+  document.getElementById('tx-hint').style.display='inline';
+  document.getElementById('tx-confirm').disabled=false;
+  document.getElementById('tx-info').innerHTML=
+    `Sacrifice <strong style="color:var(--gold)">${card.name}</strong> → extract 1 ${SUITS[card.suit]} <span style="color:${SC[card.suit]}">${SN[card.suit]}</span>`;
   renderHand();
 }
 
@@ -968,6 +1078,9 @@ function playSelected() {
   if(card.kw.includes('Catalyse')&&G.lastSuitPlayed[HUMAN]===card.suit) cost=Math.max(0,cost-1);
   if(P().aether<cost){ setHint('Not enough Aether.'); return; }
 
+  // Always clean up TX panel state when playing a card normally
+  if(G.txMode) cancelTransmute();
+
   // Check Reaction combo
   const reactionTriggered = card.kw.includes('Reaction') && G.suitPlayedThisTurn && G.suitPlayedThisTurn!==card.suit;
 
@@ -976,6 +1089,7 @@ function playSelected() {
   selectedCardUid=null;
 
   resolveEffect(card, P(), E(), reactionTriggered);
+  Audio.cardPlay(card.suit);
 
   G.lastSuitPlayed[HUMAN]=card.suit;
   G.suitPlayedThisTurn=card.suit;
@@ -994,7 +1108,7 @@ function resolveEffect(card, owner, opponent, reaction=false) {
         G.intelUsed++;
         showModal('Intelligence Action',
           `Your operative reads the top of the adversary's deck:<br><br><strong style="color:var(--gold)">${opponent.deck[0].name}</strong><br><em style="color:rgba(240,228,200,.45)">${opponent.deck[0].type} · ${SN[opponent.deck[0].suit]}</em>`,
-          [{text:'Noted',fn:'closeModal()'}]);
+          [{text:'Noted', fn:closeModal}]);
       }
       break;
     case 'strike':
@@ -1061,10 +1175,11 @@ function resolveEffect(card, owner, opponent, reaction=false) {
     case 'free_transmute':
       owner.field.push(card);
       if(owner===P()){
-        G.transmuteUsed=false;
+        // This is a card effect — does NOT consume the manual Transmute action
         showSuitChoice('Great Minds Lab: choose a free element to gain:',1,s=>{
           addElem(P(),s,1);
-          log(`Free element: gained 1 ${SN[s]}.`,'good');
+          Audio.elemGain(s);
+          log(`Great Minds Lab: gained 1 ${SN[s]} element (free — Transmute action still available).`,'good');
           renderAll();
         });
       } else {
@@ -1098,7 +1213,7 @@ function resolveEffect(card, owner, opponent, reaction=false) {
         const t2=owner.deck.slice(0,2);
         showModal('Cogwatch — Precision',
           `Top 2 of your deck:<br><br>${t2.map(c=>`<strong style="color:var(--gold)">${c.name}</strong> (${SN[c.suit]})`).join('<br>')}`,
-          [{text:'Keep order',fn:'closeModal()'},{text:'Reverse top 2',fn:'swapTop2();closeModal()'}]);
+          [{text:'Keep order', fn:closeModal}, {text:'Reverse top 2', fn:()=>{swapTop2();closeModal();}}]);
       }
       break;
     case 'spy_gw':
@@ -1109,7 +1224,7 @@ function resolveEffect(card, owner, opponent, reaction=false) {
           log(`Spy: you glimpsed Stage ${revealed.stageIdx+1} of adversary's real Work — ${revealed.stageName}.`,'spy');
           showModal('Intelligence Report',
             `Your spy reveals one stage of the adversary's Great Work:<br><br><strong style="color:var(--mer)">Stage ${revealed.stageIdx+1}: ${revealed.stageName}</strong><br><em>${revealed.desc}</em>`,
-            [{text:'File report',fn:'closeModal()'}]);
+            [{text:'File report', fn:closeModal}]);
         } else { log('Nothing more to spy from their Work.','spy'); }
       }
       break;
@@ -1204,8 +1319,13 @@ function confirmTransmute() {
   P().hand=P().hand.filter(c=>c.uid!==G.txCard);
   P().discard.push(card);
   addElem(P(),card.suit,1);
+  Audio.transmute();
+  setTimeout(() => Audio.elemGain(card.suit), 500);
   log(`Transmuted ${card.name} → +1 ${SN[card.suit]}.`,'good');
-  G.transmuteUsed=true; G.txCard=null; G.txMode=false;
+  G.transmuteUsed=true;
+  G.txCard=null;
+  G.txMode=false;
+  // Cancel clears the panel, then setPhase refreshes all button states
   cancelTransmute();
   setPhase('play');
   renderAll();
@@ -1228,24 +1348,22 @@ function promptAdvance() {
   const realWork=P().realWork;
   const decoyWork=P().decoyWork;
 
-  const btns=[];
-
+  const btns = [];
   if(realStage<3){
     const cost=realWork.stages[realStage].cost;
     const canAfford=canAffordCost(P().elements,cost);
     btns.push({
       text:`Real Work — Stage ${realStage+1}: ${realWork.stages[realStage].name} (${costStrPlain(cost)})`,
-      fn: canAfford ? `advanceReal();closeModal()` : `closeModal();setHint('Not enough elements for that stage.')`,
+      fn: canAfford ? ()=>{advanceReal();closeModal();} : ()=>{closeModal();setHint('Not enough elements for that stage.');},
       disabled: !canAfford
     });
   }
-
   if(decoyStage<3){
     const cost=decoyWork.stages[decoyStage].cost;
     const canAfford=canAffordCost(P().elements,cost);
     btns.push({
       text:`Decoy Work — Stage ${decoyStage+1} (Bluff, costs ${costStrPlain(cost)})`,
-      fn: canAfford ? `advanceDecoy();closeModal()` : `closeModal();setHint('Not enough elements for decoy.')`,
+      fn: canAfford ? ()=>{advanceDecoy();closeModal();} : ()=>{closeModal();setHint('Not enough elements for decoy.');},
       disabled: !canAfford
     });
   }
@@ -1254,7 +1372,7 @@ function promptAdvance() {
     setHint('Both Works fully advanced, or cannot afford current stage.'); return;
   }
 
-  btns.push({text:'Cancel',fn:'closeModal()'});
+  btns.push({text:'Cancel', fn:closeModal});
   const nextDesc = realStage<3 ? realWork.stages[realStage].desc : 'Work complete!';
   showModal('Advance the Great Work',
     `<em style="color:rgba(240,228,200,.5)">Spending elements to advance a stage is a turn action. Your opponent sees a stage token appear but not its contents.</em><br><br>Next real stage: <strong style="color:var(--gold)">${nextDesc}</strong>`,
@@ -1268,6 +1386,8 @@ function advanceReal() {
   spendCost(P().elements,cost);
   P().realStage++;
   G.advanceUsed=true;
+  Audio.advance();
+  Audio.setTension(P().realStage / 3);
   log(`Great Work: Stage ${stage+1} complete — ${P().realWork.stages[stage].name}.`,'imp');
   renderAll();
   checkWin();
@@ -1293,7 +1413,7 @@ function promptCorrupt() {
   if(E().realStage===0&&E().decoyStage===0){setHint('Adversary has no stages to corrupt yet.');return;}
   if(E().guardianActive){
     showModal('Blocked!','The adversary has a Resolve Operative on their field. Their Work stages are shielded — destroy the operative first.',
-      [{text:'Understood',fn:'closeModal()'}]);
+      [{text:'Understood', fn:closeModal}]);
     return;
   }
   if(E().negateActive){log('Adversary negated the Corruption!');E().negateActive=false;return;}
@@ -1301,6 +1421,7 @@ function promptCorrupt() {
   // Corrupt real work stage if any
   if(E().realStage>0){
     E().realStage--;
+    Audio.corrupt();
     log('Saboteur corrupts the adversary\'s Great Work — Stage regressed!','good');
     showCombo('Corruption!');
     renderAll();
@@ -1321,27 +1442,32 @@ function doGambit() {
   if(P().hand.length<3){
     showModal("Philosopher's Gambit",
       'You need at least 3 cards in hand to declare a Gambit. The sacrifice must be meaningful.',
-      [{text:'Understood',fn:'closeModal()'}]);
+      [{text:'Understood', fn:closeModal}]);
     return;
   }
+  const handCount = P().hand.length;
   showModal("Philosopher's Gambit — Point of No Return",
-    `You are about to sacrifice your entire hand (<strong style="color:var(--ember)">${P().hand.length} cards</strong>) for <strong style="color:var(--pri)">3 elements of any mix</strong>.<br><br>This is announced publicly. Your hand will be empty and you will be vulnerable.<br><br><em style="color:rgba(240,228,200,.4)">Once per game. Choose wisely.</em>`,
-    [{text:'Declare the Gambit!',fn:'resolveGambit()'},{text:'Stand down',fn:'closeModal()'}]);
+    `You are about to sacrifice your entire hand (<strong style="color:var(--ember)">${handCount} cards</strong>) for <strong style="color:var(--pri)">3 elements of any mix</strong>.<br><br>This is announced publicly. Your hand will be empty and you will be vulnerable.<br><br><em style="color:rgba(240,228,200,.4)">Once per game. Choose wisely.</em>`,
+    [{text:'Declare the Gambit!', fn:resolveGambit}, {text:'Stand down', fn:closeModal}]);
 }
 
 function resolveGambit() {
   closeModal();
+  const sacrificed = P().hand.length;
   P().discard.push(...P().hand);
-  P().hand=[];
-  G.gambitsUsed[HUMAN]=true;
-  log(`⚡ PHILOSOPHER'S GAMBIT declared! ${P().hand.length} cards sacrificed.`,'imp');
-  showTwoElemChoice('Gambit: choose your 3 elements:',3,results=>{
-    results.forEach(s=>addElem(P(),s,1));
-    log(`Gambit yields: ${results.map(s=>SN[s]).join(', ')}.`,'good');
-    renderAll();
-  });
+  P().hand = [];
+  G.gambitsUsed[HUMAN] = true;
+  Audio.gambit();
+  log(`⚡ PHILOSOPHER'S GAMBIT declared! ${sacrificed} card${sacrificed!==1?'s':''} sacrificed.`, 'imp');
   showCombo("Philosopher's Gambit!");
   renderAll();
+  // Element choice — after completion, re-enable End Turn
+  showTwoElemChoice("Gambit: choose your 3 elements:", 3, results => {
+    results.forEach(s => addElem(P(), s, 1));
+    log(`Gambit yields: ${results.map(s=>SN[s]).join(', ')}.`, 'good');
+    setPhase('play'); // re-evaluate all button states including End Turn
+    renderAll();
+  });
 }
 
 // ═══════════════════════════════════════════
@@ -1358,7 +1484,8 @@ function canCall() {
 
 function callWork() {
   const blocked=callBlockReason();
-  if(blocked){ showModal('Call Work Locked',blocked,[{text:'Understood',fn:'closeModal()'}]); return; }
+  if(blocked){ showModal('Call Work Locked', blocked, [{text:'Understood', fn:closeModal}]); return; }
+  Audio.callWork();
   const dom=Object.entries(E().elements).sort((a,b)=>b[1]-a[1]);
   const clue=dom[0]&&dom[0][1]>0
     ? `Dominant element observed: <strong style="color:${SC[dom[0][0]]}">${SUITS[dom[0][0]]} ${SN[dom[0][0]]}</strong>.`
@@ -1368,7 +1495,7 @@ function callWork() {
     : 'No stages spied yet.';
   showModal('Call the Adversary\'s Work',
     `A Skylark\'s win — earned by watching, not fighting.<br><br>${clue}<br><em style="color:rgba(240,228,200,.4)">${spied}</em><br><br><strong style="color:var(--ember)">Wrong call = your entire hand is discarded. One call per game.</strong><br><br>Name their Great Work:`,
-    [...GW_DB.map(w=>({text:w.name,fn:`resolveCall('${w.id}')`})),{text:'Stand down',fn:'closeModal()'}]);
+    [...GW_DB.map(w=>({text:w.name, fn:()=>resolveCall(w.id)})), {text:'Stand down', fn:closeModal}]);
 }
 
 function callBlockReason() {
@@ -1397,6 +1524,7 @@ function resolveCall(id) {
 // ═══════════════════════════════════════════
 function endTurn() {
   if(G.turn!==HUMAN) return;
+  Audio.endTurn();
   // draw-one bonus
   if(P()._drawOneTurn){ drawCard(P(),1); P()._drawOneTurn=false; }
   G.transmuteUsed=false; G.advanceUsed=false; G.drawnThisTurn=false;
@@ -1420,6 +1548,10 @@ function checkDissolution() {
   if(P().deck.length===0&&P().hand.length===0) winGame(AI,'dissolution');
   else if(E().deck.length===0&&E().hand.length===0) winGame(HUMAN,'dissolution');
 }
+function tensionFromState() {
+  return Math.max(P().realStage, E().realStage) / 3;
+}
+
 function winGame(winner, method) {
   const t={
     completion: winner===HUMAN ? '⚗️ Great Work Complete!' : '⚗️ Adversary Completes Their Work',
@@ -1440,8 +1572,9 @@ function winGame(winner, method) {
   ['btn-draw','btn-tx','btn-advance','btn-corrupt','btn-gambit','btn-end','btn-call'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.disabled=true;
   });
+  if(winner===HUMAN) Audio.win(); else Audio.defeat();
   showModal(t[method]||'Game Over', b[method]||'',
-    [{text:'Play Again',fn:'location.reload()'},{text:'View Board',fn:'closeModal()'}]);
+    [{text:'Play Again', fn:()=>location.reload()}, {text:'View Board', fn:closeModal}]);
 }
 
 // ═══════════════════════════════════════════
@@ -1449,6 +1582,7 @@ function winGame(winner, method) {
 // ═══════════════════════════════════════════
 function doAI() {
   document.getElementById('ai-bar').style.display='block';
+  Audio.aiTurn();
   setTimeout(()=>{
     drawCard(E(),2);
     const bonus=E().field.filter(c=>c.effect==='aether_gen').length;
@@ -1501,6 +1635,7 @@ function doAI() {
       if(canAffordCost(E().elements,cost)){
         spendCost(E().elements,cost);
         E().realStage++;
+        Audio.setTension(Math.max(tensionFromState(), E().realStage/3));
         log(`Adversary advances Great Work to Stage ${E().realStage}!`,'bad');
         checkWin();
       }
@@ -1648,6 +1783,7 @@ function flipVeil(uid){
   const card=G.veil.find(c=>c.uid===uid);
   if(!card||!card.faceDown) return;
   card.faceDown=false;
+  Audio.veilFlip();
   log(`Veil flipped: ${card.name}.`,'good');
   if(card.effect==='veil_steal'){
     const stolen=Math.min(1,E().aether);
@@ -1782,59 +1918,70 @@ function renderGW(id, who, isEnemy){
 }
 
 // ═══════════════════════════════════════════
-//  CHOICE MODALS
+//  CHOICE MODALS — closure-based, no eval/strings
 // ═══════════════════════════════════════════
-function showSuitChoice(title, n, cb){
-  showModal(title,'',Object.keys(SUITS).map(s=>({
-    text:`${SUITS[s]} ${SN[s]}`,
-    fn:`_suitCb('${s}')`
+function showSuitChoice(title, n, cb) {
+  showModal(title, '', Object.keys(SUITS).map(s => ({
+    text: `${SUITS[s]} ${SN[s]}`,
+    fn: () => { closeModal(); cb(s); }
   })));
-  window._suitCb=s=>{closeModal();cb(s);};
 }
 
-let _twoElemPicks=[];
-let _twoElemNeeded=0;
-let _twoElemCb=null;
-function showTwoElemChoice(title, n, cb){
-  _twoElemPicks=[]; _twoElemNeeded=n; _twoElemCb=cb;
+let _twoElemPicks = [];
+let _twoElemNeeded = 0;
+let _twoElemCb = null;
+
+function showTwoElemChoice(title, n, cb) {
+  _twoElemPicks = []; _twoElemNeeded = n; _twoElemCb = cb;
   _twoElemRender(title);
 }
-function _twoElemRender(title){
-  const picked=_twoElemPicks.map(s=>SN[s]).join(' + ')||'none yet';
+
+function _twoElemRender(title) {
+  const picked = _twoElemPicks.map(s => SN[s]).join(' + ') || 'none yet';
+  const ready = _twoElemPicks.length >= _twoElemNeeded;
+  const pickBtns = Object.keys(SUITS).map(s => ({
+    text: `${SUITS[s]} ${SN[s]}`,
+    fn: () => {
+      if(_twoElemPicks.length < _twoElemNeeded) _twoElemPicks.push(s);
+      _twoElemRender(title);
+    }
+  }));
+  const confirmBtns = ready ? [{
+    text: `Confirm (${_twoElemPicks.map(s => SN[s]).join(', ')})`,
+    fn: () => { closeModal(); if(_twoElemCb) _twoElemCb([..._twoElemPicks]); }
+  }] : [];
   showModal(title,
     `Chosen: <strong style="color:var(--gold)">${picked}</strong> (${_twoElemPicks.length}/${_twoElemNeeded})`,
-    Object.keys(SUITS).map(s=>({text:`${SUITS[s]} ${SN[s]}`,fn:`_pickElem('${s}')`})).concat(
-      _twoElemPicks.length===_twoElemNeeded?[{text:'Confirm',fn:'_confirmTwoElem()'}]:[]
-    ));
+    [...pickBtns, ...confirmBtns]
+  );
 }
-window._pickElem=s=>{
-  if(_twoElemPicks.length<_twoElemNeeded) _twoElemPicks.push(s);
-  _twoElemRender(`Choose ${_twoElemNeeded} elements:`);
-};
-window._confirmTwoElem=()=>{ closeModal(); _twoElemCb([..._twoElemPicks]); };
 
-function showConvertModal(){
+function showConvertModal() {
+  const available = Object.entries(P().elements).filter(([s,n]) => n >= 2);
+  if(!available.length) { setHint('No element at 2+ to convert.'); return; }
   showModal('Transmutation — Convert Elements',
     'Choose a suit with 2+ elements to convert 2 into another suit:',
-    Object.entries(P().elements).filter(([s,n])=>n>=2).map(([s])=>({
-      text:`${SUITS[s]} 2x ${SN[s]} →`,
-      fn:`_chooseConvertFrom('${s}')`
-    })).concat([{text:'Cancel',fn:'closeModal()'}]));
+    [...available.map(([s]) => ({
+      text: `${SUITS[s]} 2× ${SN[s]} →`,
+      fn: () => _chooseConvertTo(s)
+    })), {text: 'Cancel', fn: closeModal}]
+  );
 }
-window._chooseConvertFrom=from=>{
-  showModal('Convert To',`Convert 2 ${SN[from]} into 2 of which element?`,
-    Object.keys(SUITS).filter(s=>s!==from).map(s=>({
-      text:`${SUITS[s]} ${SN[s]}`,
-      fn:`_doConvert('${from}','${s}')`
-    })).concat([{text:'Cancel',fn:'closeModal()'}]));
-};
-window._doConvert=(from,to)=>{
-  closeModal();
-  P().elements[from]-=2;
-  addElem(P(),to,2);
-  log(`Converted 2 ${SN[from]} → 2 ${SN[to]}.`,'good');
-  renderAll();
-};
+
+function _chooseConvertTo(from) {
+  showModal('Convert To', `Convert 2 ${SN[from]} into 2 of which element?`,
+    [...Object.keys(SUITS).filter(s => s !== from).map(s => ({
+      text: `${SUITS[s]} ${SN[s]}`,
+      fn: () => {
+        closeModal();
+        P().elements[from] -= 2;
+        addElem(P(), s, 2);
+        log(`Converted 2 ${SN[from]} → 2 ${SN[s]}.`, 'good');
+        renderAll();
+      }
+    })), {text: 'Cancel', fn: closeModal}]
+  );
+}
 
 // ═══════════════════════════════════════════
 //  UI HELPERS
@@ -1849,21 +1996,42 @@ function log(msg,cls=''){
   while(el.children.length>50) el.removeChild(el.lastChild);
 }
 
-function showModal(title,body,btns){
-  document.getElementById('m-title').textContent=title;
-  document.getElementById('m-body').innerHTML=body;
-  const bc=document.getElementById('m-btns'); bc.innerHTML='';
-  btns.forEach(b=>{
-    const btn=document.createElement('button');
-    btn.className='btn pri';
-    btn.textContent=b.text;
-    if(b.disabled) btn.disabled=true;
-    btn.onclick=()=>{ try{eval(b.fn);}catch(e){console.error(e);} };
+// ── MODAL FUNCTION REGISTRY (replaces eval — safe in all sandboxes) ──
+const _R = {}; // registry: key → function
+let _rk = 0;
+function reg(fn) {
+  const k = 'r'+(++_rk);
+  _R[k] = fn;
+  return k;
+}
+
+function showModal(title, body, btns) {
+  document.getElementById('m-title').textContent = title;
+  document.getElementById('m-body').innerHTML = body;
+  const bc = document.getElementById('m-btns'); bc.innerHTML = '';
+  btns.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'btn pri';
+    btn.textContent = b.text;
+    if(b.disabled) btn.disabled = true;
+    // b.fn is now either a string key into _R, or a direct function
+    btn.onclick = () => {
+      if(typeof b.fn === 'function') { b.fn(); }
+      else if(typeof b.fn === 'string' && _R[b.fn]) { _R[b.fn](); }
+      else if(typeof b.fn === 'string') {
+        // fallback for simple named globals like 'closeModal()' 'location.reload()'
+        const name = b.fn.replace(/\(.*\)/, '').trim();
+        if(name === 'closeModal') closeModal();
+        else if(name === 'location.reload') location.reload();
+        else if(name === 'swapTop2') { swapTop2(); closeModal(); }
+        else console.warn('Unhandled modal fn:', b.fn);
+      }
+    };
     bc.appendChild(btn);
   });
   document.getElementById('moverlay').classList.add('on');
 }
-function closeModal(){ document.getElementById('moverlay').classList.remove('on'); }
+function closeModal() { document.getElementById('moverlay').classList.remove('on'); }
 
 function showCombo(text){
   const el=document.createElement('div');
@@ -1872,6 +2040,712 @@ function showCombo(text){
   document.body.appendChild(el);
   setTimeout(()=>el.remove(),950);
 }
+
+// ═══════════════════════════════════════════
+//  COMMIT LOG
+// ═══════════════════════════════════════════
+const COMMITS = [
+  {
+    hash: 'a4f9c2e',
+    tag: 'feat',
+    msg: 'feat: add full Web Audio SFX + generative soundtrack',
+    desc: `Implemented a complete procedural audio engine using the Web Audio API — no external files required.
+
+Music: Three-layer generative score comprising a detuned brass drone (three oscillator pairs with slow LFO tremolo and lowpass filtering), irregular steam percussion (noise bursts, boiler clanks, pressure hisses, clockwork ticks), and a sparse pentatonic melody that improvises continuously over A minor pentatonic. A tension system (0–1 float) responds to Great Work stage advances, progressively tightening rhythm tempo, raising melody pitch range, and swelling drone volume.
+
+SFX: 11 distinct synthesised events — card draw (paper flutter + mechanical click), card play (suit-tuned brass thud, one of four pitches), element gain (crystalline chime tuned per suit), transmutation (rising alchemical shimmer cascade + glass harmonic tail), stage advance (ceremonial bell with inharmonic partials + reverb convolution), corruption (noise scrape + tritone dissonant sting), Philosopher's Gambit (ascending brass swell + crash), veil flip (swoosh + reveal chime), AI turn (clockwork tick sequence), win (major chord bloom arpeggio), defeat (descending minor dissolution).
+
+Controls: Separate Music and SFX gain nodes with independent volume sliders (range inputs) and mute toggles in the header. Audio context wakes on first user interaction to comply with browser autoplay policy.`,
+    files: ['Audio Engine', 'SFX Events × 11', 'Music Controls UI', 'Tension System']
+  },
+  {
+    hash: 'b2d8a71',
+    tag: 'fix',
+    msg: 'fix: replace eval() in modal buttons with closure-based dispatch',
+    desc: `All modal button actions were using eval(b.fn) where b.fn was a string. This silently fails in sandboxed environments (Claude preview, strict CSP), leaving the game in broken intermediate states.
+
+Replaced with a direct function reference system: modal buttons now accept fn as a function (()=>{}) rather than a string. Updated every showModal call across the codebase — init, intel, cogwatch, spy, advance work, corrupt, gambit, call work, win/loss, and all choice modals.
+
+Also rewrote showSuitChoice, showTwoElemChoice, _twoElemRender, showConvertModal and _chooseConvertTo as proper closures, eliminating the window._suitCb / window._pickElem / window._doConvert string-dispatch pattern entirely.
+
+Secondary fixes: Gambit log now captures hand.length before clearing the hand (was always showing 0). setPhase('play') called after Gambit element selection so End Turn re-enables immediately even with empty hand.`,
+    files: ['showModal()', 'resolveGambit()', 'showSuitChoice()', 'showTwoElemChoice()', '_twoElemRender()']
+  },
+  {
+    hash: 'c9e3f55',
+    tag: 'feat',
+    msg: 'feat: card zoom overlay — full detail on click for any card',
+    desc: `Clicking any card (hand or field, player or enemy) now opens a full-size detail overlay (300px wide) with all text readable at normal font sizes.
+
+Overlay shows: card name, type + suit metadata, cost medallion, large glyph art band, keyword badge (colour-coded per keyword type), full rules text, Wit/Resolve/Fortify stat pills, and flavor text. Background tinted to suit colour.
+
+Action buttons appear contextually: Play Card (with real-time Aether cost including Catalyse discount, disabled if unaffordable) and Sacrifice (shortcut to Transmute — pre-selects the card in TX panel, validates cap and availability before opening). Buttons hidden for field cards and during non-play phases.
+
+Replaced the previous tooltip system on hand cards. Field cards on both sides clickable for inspection at any time.`,
+    files: ['openZoom()', 'closeZoom()', 'zoomPlay()', 'zoomTransmute()', 'renderField()']
+  },
+  {
+    hash: 'd1b4e38',
+    tag: 'fix',
+    msg: 'fix: transmute panel persisting across unrelated card plays',
+    desc: `Three separate transmute bugs fixed:
+
+1. Great Minds Laboratory (free_transmute effect) was calling G.transmuteUsed=false, resetting the manual transmute action mid-turn and causing the TX panel to re-appear unexpectedly. Removed — the Lab's free element is a card effect, not a transmute action.
+
+2. playSelected() was not calling cancelTransmute() before resolving, leaving G.txMode=true and the panel visible after playing a different card via the zoom overlay.
+
+3. zoomTransmute() did not validate element cap or transmuteUsed before opening the TX panel, could enter a broken state. Now validates both and bails early with a hint message.
+
+confirmTransmute() now calls setPhase('play') after cancelTransmute() to properly refresh all button states.`,
+    files: ['free_transmute case', 'playSelected()', 'zoomTransmute()', 'confirmTransmute()']
+  },
+  {
+    hash: 'e6a2d19',
+    tag: 'feat',
+    msg: 'feat: v3 full redesign — staged Great Works, bluffing, corruption, Gambit',
+    desc: `Complete ground-up redesign of gameplay systems. Previous version accumulated suit resources passively as cards were played. New version:
+
+Elements: Earned exclusively via Transmutation — sacrifice a card from hand to extract 1 element of its suit. Max 4 of any element. Elements persist between turns and are spent to advance Great Work stages.
+
+Great Works: 3-stage ritual (Calcination → Dissolution → Coagulation). Each stage has a specific element cost. Stages must be completed in order — cannot skip. Advancing a stage is a deliberate turn action costing Aether and elements.
+
+Bluffing: Each player holds a Real Work + a Decoy Work, both face-down. Opponent sees two mystery cards and stage tokens. Advancing the Decoy costs real elements — genuine sacrifice to mislead.
+
+Hidden progress: Opponent sees only stage dot count, not stage names or element requirements. Intelligence Report card (Spy keyword) reveals one stage. Call Work gated behind Round 5+, 5 enemy cards played, and 1 intel action used. Wrong call = entire hand discarded.
+
+Corruption: Saboteur operative on field enables Corrupt action — regresses opponent's completed stage. Blocked by Resolve Operative (Guardian keyword).
+
+Philosopher's Gambit: Sacrifice entire hand (min 3) for 3 elements of any mix. Once per game. Announced publicly.
+
+Card keywords: Catalyse (−1 cost if same suit played last turn), Reaction (bonus effect if different suit played same turn), Veil (enters face-down shared zone, flip to activate), Spy, Corrupt, Guardian.
+
+Player slots refactored as players[] array for future multiplayer — AI slot and human slot use identical state shape.`,
+    files: ['Game State', 'Great Work System', 'Transmute System', 'AI Logic', 'Card Database × 24', 'Keyword System']
+  },
+  {
+    hash: 'f3c7b04',
+    tag: 'fix',
+    msg: 'fix: Call Work locked behind proper intelligence gates',
+    desc: `Call Work was available from turn 1 with a trivial 2-Aether wrong-guess penalty, making it a free first-turn win condition by cycling all three options.
+
+Gates added: minimum Round 4, adversary must have played 4+ cards (tracked via enemyCardsPlayed counter), at least 1 Intel Action used (tracked via intelUsed counter). One call per game — callWorkUsed flag set regardless of outcome.
+
+Wrong guess penalty changed from −2 Aether to discard entire hand. Button label updates dynamically: 🔒 when locked, unlabelled lock when available, ✗ when used. Clicking while locked shows a specific reason message.
+
+Call Work modal now shows observed dominant suit and any spied stage information as contextual clues.`,
+    files: ['canCall()', 'callBlockReason()', 'callWork()', 'resolveCall()', 'setPhase()']
+  },
+  {
+    hash: '2a9f6d3',
+    tag: 'design',
+    msg: 'design: initial Aetherdraft browser prototype — v1 → v2',
+    desc: `First playable browser implementation of Aetherdraft, the in-universe card game for Sky Bridge Saga.
+
+v1: Generic steampunk aesthetic, basic card play, AI opponent, 3 win conditions (Completion, Decryption, Dissolution). Suit resources accumulated passively as side-effect of playing cards.
+
+v2: Full lore integration from Sky Bridge: Embers of Elekra novel. Seven provinces of Pleiône, authentic card names (Henson AC, The Hailer, The Inquiry Office, Cogwatch, Oracle's Warning), correct factions, Laarka currency references, Skylark agents as unnamed operatives. Alchemical suits (Sulphur/Salt/Mercury/Prima Materia) with correct in-universe roles.
+
+Game state: single player vs AI, 20-card decks built from 15-card database (2 copies each), 4 suit resources, 3 Great Works, shared Veil zone, player field + enemy field.`,
+    files: ['Initial prototype', 'Card Database', 'Game State', 'AI Opponent', 'Lore Integration']
+  },
+];
+
+function openCommits() {
+  const list = document.getElementById('commit-list');
+  list.innerHTML = '';
+  COMMITS.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'commit';
+    el.innerHTML = `
+      <div class="commit-hdr">
+        <span class="commit-tag ${c.tag}">${c.tag}</span>
+        <span class="commit-msg">${c.msg}</span>
+        <span class="commit-hash">${c.hash}</span>
+      </div>
+      <div class="commit-body">
+        <div class="commit-desc">${c.desc.replace(/\n\n/g,'<br><br>').replace(/\n/g,' ')}</div>
+        <div class="commit-files">${c.files.map(f=>`<span class="commit-file">${f}</span>`).join('')}</div>
+        <div class="copy-row">
+          <button class="copy-btn" onclick="copyCommit(this,'${c.hash}','msg')">⎘ Copy message</button>
+          <button class="copy-btn" onclick="copyCommit(this,'${c.hash}','desc')">⎘ Copy full description</button>
+          <button class="copy-btn" onclick="copyCommit(this,'${c.hash}','all')">⎘ Copy all</button>
+        </div>
+      </div>`;
+    list.appendChild(el);
+  });
+  document.getElementById('commit-overlay').classList.add('on');
+}
+
+function closeCommits() {
+  document.getElementById('commit-overlay').classList.remove('on');
+}
+
+function copyCommit(btn, hash, part) {
+  const c = COMMITS.find(c => c.hash === hash);
+  if(!c) return;
+  let text = '';
+  if(part === 'msg')  text = c.msg;
+  if(part === 'desc') text = c.desc;
+  if(part === 'all')  text = `${c.msg}\n\n${c.desc}\n\nFiles changed: ${c.files.join(', ')}`;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = btn.textContent.replace('✓ Copied', `⎘ Copy ${part === 'msg' ? 'message' : part === 'desc' ? 'full description' : 'all'}`); }, 1800);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  AUDIO ENGINE — Web Audio API, no files
+// ═══════════════════════════════════════════
+const Audio = (() => {
+  let ctx = null;
+  let musicGain, sfxGain, masterGain;
+  let musicMuted = false, sfxMuted = false;
+  let musicVol = 0.70, sfxVol = 0.80;
+
+  // Music engine state
+  let musicRunning = false;
+  let droneNodes = [];
+  let rhythmTimer = null;
+  let melodyTimer = null;
+  let tensionLevel = 0; // 0–1, increases as game progresses
+
+  // Pentatonic scale frequencies (A minor pentatonic, multiple octaves)
+  const PENTA = [
+    110, 130.81, 155.56, 174.61, 207.65,
+    220, 261.63, 311.13, 349.23, 415.30,
+    440, 523.25, 622.25, 698.46, 830.61
+  ];
+
+  // Suit element pitches
+  const SUIT_FREQ = {
+    sulphur: 220,   // A3 — warm brass
+    salt:    293.66,// D4 — cold metallic
+    mercury: 329.63,// E4 — airy harmonic
+    prima:   392.00 // G4 — resonant choir
+  };
+
+  function getCtx() {
+    if(!ctx) {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = ctx.createGain(); masterGain.gain.value = 1.0;
+      musicGain  = ctx.createGain(); musicGain.gain.value  = musicVol;
+      sfxGain    = ctx.createGain(); sfxGain.gain.value    = sfxVol;
+      musicGain.connect(masterGain);
+      sfxGain.connect(masterGain);
+      masterGain.connect(ctx.destination);
+    }
+    if(ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  // ── UTILITY NODES ──────────────────────────
+  function osc(freq, type, dest, vol, startT, endT, detuneAmt=0) {
+    const c = getCtx();
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+    if(detuneAmt) o.detune.value = detuneAmt;
+    g.gain.value = vol;
+    o.connect(g); g.connect(dest);
+    o.start(startT); o.stop(endT);
+    return { o, g };
+  }
+
+  function envelope(gainNode, startT, attackT, sustainVol, decayT, sustainT, releaseT) {
+    const g = gainNode.gain;
+    g.setValueAtTime(0, startT);
+    g.linearRampToValueAtTime(sustainVol, startT + attackT);
+    g.linearRampToValueAtTime(sustainVol * 0.8, startT + attackT + decayT);
+    g.setValueAtTime(sustainVol * 0.8, startT + attackT + decayT + sustainT);
+    g.linearRampToValueAtTime(0, startT + attackT + decayT + sustainT + releaseT);
+  }
+
+  function noise(dest, vol, dur, filterFreq=800) {
+    const c = getCtx();
+    const buf = c.createBuffer(1, c.sampleRate * dur, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+    const src = c.createBufferSource();
+    src.buffer = buf;
+    const filt = c.createBiquadFilter();
+    filt.type = 'bandpass';
+    filt.frequency.value = filterFreq;
+    filt.Q.value = 2;
+    const g = c.createGain();
+    g.gain.value = vol;
+    src.connect(filt); filt.connect(g); g.connect(dest);
+    src.start(); src.stop(c.currentTime + dur);
+  }
+
+  function reverb(dest, amount=0.4) {
+    const c = getCtx();
+    const conv = c.createConvolver();
+    const len = c.sampleRate * 2.5;
+    const buf = c.createBuffer(2, len, c.sampleRate);
+    for(let ch=0;ch<2;ch++){
+      const d=buf.getChannelData(ch);
+      for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.5);
+    }
+    conv.buffer = buf;
+    const wet = c.createGain(); wet.gain.value = amount;
+    const dry = c.createGain(); dry.gain.value = 1-amount*0.4;
+    conv.connect(wet);
+    return { input: conv, wet, dry, connect(target){ wet.connect(target); dry.connect(target); } };
+  }
+
+  // ── MUSIC ENGINE ───────────────────────────
+  function startMusic() {
+    if(musicRunning) return;
+    musicRunning = true;
+    const c = getCtx();
+
+    // Layer 1: Deep drone — two detuned oscillators, very slow
+    function makeDroneLayer(freq, detune, vol) {
+      const o1 = c.createOscillator();
+      const o2 = c.createOscillator();
+      const g  = c.createGain();
+      const rev = reverb(musicGain, 0.55);
+      o1.type = 'sawtooth'; o1.frequency.value = freq;   o1.detune.value = detune;
+      o2.type = 'sawtooth'; o2.frequency.value = freq;   o2.detune.value = -detune;
+      g.gain.value = vol;
+      // Slow tremolo
+      const lfo = c.createOscillator();
+      const lfog = c.createGain();
+      lfo.frequency.value = 0.08 + Math.random()*0.04;
+      lfog.gain.value = vol * 0.3;
+      lfo.connect(lfog); lfog.connect(g.gain);
+      // Filter
+      const filt = c.createBiquadFilter();
+      filt.type = 'lowpass'; filt.frequency.value = 600;
+      o1.connect(filt); o2.connect(filt); filt.connect(g);
+      g.connect(rev.input); g.connect(rev.dry);
+      rev.connect(musicGain);
+      o1.start(); o2.start(); lfo.start();
+      droneNodes.push(o1, o2, lfo);
+    }
+    makeDroneLayer(55, 8, 0.10);   // deep A1 drone
+    makeDroneLayer(82.5, 5, 0.07); // E2 fifth
+    makeDroneLayer(110, 12, 0.05); // A2 overtone
+
+    // Layer 2: Steam rhythm — irregular noise bursts
+    function scheduleRhythm() {
+      if(!musicRunning) return;
+      const c = getCtx();
+      const now = c.currentTime;
+      const base = 0.9 + tensionLevel * 0.4; // faster with tension
+      // Boiler clank
+      noise(musicGain, 0.04 + tensionLevel*0.03, 0.06, 120 + Math.random()*80);
+      // Occasional higher hiss
+      if(Math.random() < 0.4) {
+        setTimeout(() => { if(musicRunning) noise(musicGain, 0.02, 0.12, 2000+Math.random()*1000); },
+          (base*0.3 + Math.random()*base*0.2)*1000);
+      }
+      // Tick click
+      if(Math.random() < 0.6 + tensionLevel*0.3) {
+        const clickTime = base*0.5 + Math.random()*base*0.3;
+        setTimeout(() => {
+          if(!musicRunning) return;
+          const tick = getCtx().createOscillator();
+          const tg = getCtx().createGain();
+          tick.frequency.value = 800 + Math.random()*400;
+          tick.type = 'square';
+          tg.gain.setValueAtTime(0.06, getCtx().currentTime);
+          tg.gain.linearRampToValueAtTime(0, getCtx().currentTime + 0.03);
+          tick.connect(tg); tg.connect(musicGain);
+          tick.start(); tick.stop(getCtx().currentTime + 0.03);
+        }, clickTime*1000);
+      }
+      const interval = (base + Math.random()*base*0.5) * (1 - tensionLevel*0.25);
+      rhythmTimer = setTimeout(scheduleRhythm, Math.max(300, interval*1000));
+    }
+    scheduleRhythm();
+
+    // Layer 3: Sparse pentatonic melody
+    function scheduleMelody() {
+      if(!musicRunning) return;
+      const c = getCtx();
+      // Pick a random note from the pentatonic, biased toward lower octave when calm
+      const bias = Math.floor(tensionLevel * 8);
+      const pool = PENTA.slice(bias, bias + 7);
+      const freq = pool[Math.floor(Math.random()*pool.length)];
+      const vol  = 0.06 + tensionLevel*0.05;
+      const dur  = 1.2 + Math.random()*2.0;
+
+      const o = c.createOscillator();
+      const g = c.createGain();
+      const rev = reverb(musicGain, 0.7);
+      o.type = 'sine';
+      o.frequency.value = freq;
+      // Slight pitch wobble (vibrato)
+      const vib = c.createOscillator();
+      const vibg = c.createGain();
+      vib.frequency.value = 4.5 + Math.random()*1.5;
+      vibg.gain.value = freq * 0.004;
+      vib.connect(vibg); vibg.connect(o.frequency);
+      envelope(g, c.currentTime, 0.3, vol, 0.2, dur-0.8, 0.8);
+      o.connect(g); g.connect(rev.input); g.connect(rev.dry);
+      rev.connect(musicGain);
+      o.start(); o.stop(c.currentTime + dur + 0.8);
+      vib.start(); vib.stop(c.currentTime + dur + 0.8);
+
+      // Sometimes add a harmony a perfect fifth above
+      if(Math.random() < 0.25 + tensionLevel*0.2) {
+        const o2 = c.createOscillator();
+        const g2 = c.createGain();
+        o2.type = 'sine';
+        o2.frequency.value = freq * 1.5;
+        envelope(g2, c.currentTime, 0.5, vol*0.4, 0.2, dur-0.8, 1.0);
+        o2.connect(g2); g2.connect(musicGain);
+        o2.start(); o2.stop(c.currentTime + dur + 1.0);
+      }
+
+      // Gap before next note — longer when calm, tighter with tension
+      const gap = (2.5 - tensionLevel*1.2) + Math.random() * (3.5 - tensionLevel*1.5);
+      melodyTimer = setTimeout(scheduleMelody, Math.max(600, gap*1000));
+    }
+    // Start melody after a short intro silence
+    melodyTimer = setTimeout(scheduleMelody, 2200);
+  }
+
+  function stopMusic() {
+    musicRunning = false;
+    clearTimeout(rhythmTimer);
+    clearTimeout(melodyTimer);
+    droneNodes.forEach(n => { try { n.stop(); } catch(e){} });
+    droneNodes = [];
+  }
+
+  function setTension(t) {
+    tensionLevel = Math.max(0, Math.min(1, t));
+    // Adjust drone filter cutoff — more aggressive with tension
+    // (drones re-created on next music start; live adjustment via gain)
+    if(musicGain) {
+      const targetVol = musicVol * (1 + tensionLevel * 0.3);
+      musicGain.gain.linearRampToValueAtTime(Math.min(1, targetVol), getCtx().currentTime + 2.0);
+    }
+  }
+
+  // ── SFX ────────────────────────────────────
+  function sfx_draw() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Paper flutter — filtered noise burst
+    noise(sfxGain, 0.18, 0.08, 3500);
+    // Mechanical slide click
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = 'triangle'; o.frequency.value = 1200;
+    o.frequency.linearRampToValueAtTime(600, now+0.06);
+    g.gain.setValueAtTime(0.12, now);
+    g.gain.linearRampToValueAtTime(0, now+0.08);
+    o.connect(g); g.connect(sfxGain);
+    o.start(now); o.stop(now+0.09);
+  }
+
+  function sfx_cardPlay(suit) {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    const freq = SUIT_FREQ[suit] || 220;
+    // Brass thud body
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = 'sawtooth'; o.frequency.value = freq;
+    o.frequency.linearRampToValueAtTime(freq*0.6, now+0.15);
+    g.gain.setValueAtTime(0.0, now);
+    g.gain.linearRampToValueAtTime(0.28, now+0.01);
+    g.gain.linearRampToValueAtTime(0.08, now+0.18);
+    g.gain.linearRampToValueAtTime(0, now+0.45);
+    const filt = c.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 1200;
+    o.connect(filt); filt.connect(g); g.connect(sfxGain);
+    o.start(now); o.stop(now+0.5);
+    // Impact click
+    noise(sfxGain, 0.12, 0.04, 400);
+  }
+
+  function sfx_elemGain(suit) {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    const freq = SUIT_FREQ[suit] || 440;
+    // Crystalline chime — sine with shimmer
+    [1, 2, 3].forEach((partial, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine';
+      o.frequency.value = freq * partial;
+      const del = i * 0.04;
+      g.gain.setValueAtTime(0, now+del);
+      g.gain.linearRampToValueAtTime(0.18/(partial), now+del+0.05);
+      g.gain.linearRampToValueAtTime(0, now+del+0.6);
+      o.connect(g); g.connect(sfxGain);
+      o.start(now+del); o.stop(now+del+0.7);
+    });
+  }
+
+  function sfx_transmute() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Rising alchemical shimmer
+    const freqs = [220, 277, 330, 415, 523, 659, 831];
+    freqs.forEach((f, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = i%2===0 ? 'sine' : 'triangle';
+      o.frequency.value = f;
+      const t = now + i*0.07;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.10, t+0.05);
+      g.gain.linearRampToValueAtTime(0, t+0.35);
+      o.connect(g); g.connect(sfxGain);
+      o.start(t); o.stop(t+0.4);
+    });
+    // Glass harmonic tail
+    const tail = c.createOscillator();
+    const tg = c.createGain();
+    tail.type = 'sine'; tail.frequency.value = 1047;
+    tg.gain.setValueAtTime(0.08, now+0.5);
+    tg.gain.linearRampToValueAtTime(0, now+1.4);
+    tail.connect(tg); tg.connect(sfxGain);
+    tail.start(now+0.5); tail.stop(now+1.5);
+  }
+
+  function sfx_stageAdvance() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Deep ceremonial bell
+    const partials = [1, 2.756, 5.404, 8.933];
+    const vols     = [0.30, 0.15, 0.08, 0.04];
+    const rev = reverb(sfxGain, 0.65);
+    partials.forEach((p, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine';
+      o.frequency.value = 110 * p;
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(vols[i], now+0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, now+2.5);
+      o.connect(g); g.connect(rev.input); g.connect(rev.dry);
+      o.start(now); o.stop(now+2.6);
+    });
+    rev.connect(sfxGain);
+    // Shimmer accent
+    setTimeout(() => sfx_elemGain('prima'), 180);
+  }
+
+  function sfx_corrupt() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Harsh metallic scrape
+    noise(sfxGain, 0.35, 0.18, 180);
+    // Dissonant sting — tritone cluster
+    [220, 311, 466].forEach((f, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sawtooth'; o.frequency.value = f;
+      const t = now + i*0.03;
+      g.gain.setValueAtTime(0.12, t);
+      g.gain.linearRampToValueAtTime(0, t+0.3);
+      o.connect(g); g.connect(sfxGain);
+      o.start(t); o.stop(t+0.35);
+    });
+  }
+
+  function sfx_gambit() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Dramatic rising brass swell
+    const notes = [110, 138.59, 164.81, 207.65, 246.94, 329.63, 440];
+    notes.forEach((f, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sawtooth';
+      o.frequency.value = f;
+      const t = now + i * 0.11;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.18, t+0.08);
+      g.gain.linearRampToValueAtTime(0.08, t+0.35);
+      g.gain.linearRampToValueAtTime(0, t+0.7);
+      const filt = c.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.frequency.value = 800 + i*200;
+      o.connect(filt); filt.connect(g); g.connect(sfxGain);
+      o.start(t); o.stop(t+0.75);
+    });
+    // Final crash
+    setTimeout(() => noise(sfxGain, 0.25, 0.15, 250), 750);
+  }
+
+  function sfx_veilFlip() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Whoosh
+    const swoosh = c.createOscillator();
+    const sg = c.createGain();
+    swoosh.type = 'sine';
+    swoosh.frequency.setValueAtTime(800, now);
+    swoosh.frequency.linearRampToValueAtTime(200, now+0.25);
+    sg.gain.setValueAtTime(0.15, now);
+    sg.gain.linearRampToValueAtTime(0, now+0.28);
+    swoosh.connect(sg); sg.connect(sfxGain);
+    swoosh.start(now); swoosh.stop(now+0.3);
+    // Reveal chime
+    setTimeout(() => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine'; o.frequency.value = 659;
+      g.gain.setValueAtTime(0.12, c.currentTime);
+      g.gain.linearRampToValueAtTime(0, c.currentTime+0.5);
+      o.connect(g); g.connect(sfxGain);
+      o.start(c.currentTime); o.stop(c.currentTime+0.55);
+    }, 220);
+  }
+
+  function sfx_aiTurn() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Soft clockwork tick sequence
+    [0, 0.32, 0.64, 0.85].forEach(t => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'square'; o.frequency.value = 900 + Math.random()*200;
+      g.gain.setValueAtTime(0.06, now+t);
+      g.gain.linearRampToValueAtTime(0, now+t+0.04);
+      o.connect(g); g.connect(sfxGain);
+      o.start(now+t); o.stop(now+t+0.05);
+    });
+  }
+
+  function sfx_win() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    const rev = reverb(sfxGain, 0.7);
+    // Major chord bloom — A major arpeggiated
+    const chord = [220, 277.18, 329.63, 440, 554.37, 659.26, 880];
+    chord.forEach((f, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      const t = now + i*0.09;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.15, t+0.1);
+      g.gain.linearRampToValueAtTime(0.08, t+0.4);
+      g.gain.linearRampToValueAtTime(0, t+2.5);
+      o.connect(g); g.connect(rev.input); g.connect(rev.dry);
+      o.start(t); o.stop(t+2.6);
+    });
+    rev.connect(sfxGain);
+    // Shimmer tail
+    for(let i=0;i<4;i++) setTimeout(() => sfx_elemGain('prima'), 400 + i*180);
+  }
+
+  function sfx_defeat() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    const rev = reverb(sfxGain, 0.8);
+    // Minor dissolution — descending
+    const notes = [440, 415.30, 392, 369.99, 349.23, 329.63, 293.66, 220];
+    notes.forEach((f, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      const t = now + i*0.22;
+      const vol = 0.16 * (1 - i/notes.length);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol, t+0.1);
+      g.gain.linearRampToValueAtTime(0, t+0.8);
+      o.connect(g); g.connect(rev.input); g.connect(rev.dry);
+      o.start(t); o.stop(t+0.9);
+    });
+    rev.connect(sfxGain);
+  }
+
+  function sfx_endTurn() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Soft gear-click
+    [0, 0.06].forEach(t => noise(sfxGain, 0.08, 0.04, 300+t*1000));
+  }
+
+  function sfx_callWork() {
+    if(sfxMuted) return;
+    const c = getCtx(); const now = c.currentTime;
+    // Tense rising tone
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(330, now);
+    o.frequency.linearRampToValueAtTime(660, now+0.4);
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.15, now+0.1);
+    g.gain.linearRampToValueAtTime(0, now+0.45);
+    o.connect(g); g.connect(sfxGain);
+    o.start(now); o.stop(now+0.5);
+  }
+
+  // ── CONTROLS ───────────────────────────────
+  function toggleMusic() {
+    musicMuted = !musicMuted;
+    const btn = document.getElementById('btn-mute-music');
+    if(musicMuted) {
+      musicGain && (musicGain.gain.value = 0);
+      btn.classList.add('muted'); btn.textContent = '♪̶';
+      stopMusic();
+    } else {
+      musicGain && (musicGain.gain.value = musicVol);
+      btn.classList.remove('muted'); btn.textContent = '♪';
+      startMusic();
+    }
+  }
+
+  function toggleSfx() {
+    sfxMuted = !sfxMuted;
+    const btn = document.getElementById('btn-mute-sfx');
+    btn.classList.toggle('muted', sfxMuted);
+    btn.textContent = sfxMuted ? '⚡̶' : '⚡';
+  }
+
+  function setMusicVol(v) {
+    musicVol = v;
+    if(musicGain && !musicMuted) musicGain.gain.value = v;
+  }
+
+  function setSfxVol(v) {
+    sfxVol = v;
+    if(sfxGain) sfxGain.gain.value = v;
+  }
+
+  // First interaction starts audio context + music
+  function wake() {
+    getCtx();
+    if(!musicRunning && !musicMuted) startMusic();
+  }
+
+  return {
+    wake, setTension, startMusic, stopMusic,
+    toggleMusic, toggleSfx, setMusicVol, setSfxVol,
+    draw:      sfx_draw,
+    cardPlay:  sfx_cardPlay,
+    elemGain:  sfx_elemGain,
+    transmute: sfx_transmute,
+    advance:   sfx_stageAdvance,
+    corrupt:   sfx_corrupt,
+    gambit:    sfx_gambit,
+    veilFlip:  sfx_veilFlip,
+    aiTurn:    sfx_aiTurn,
+    win:       sfx_win,
+    defeat:    sfx_defeat,
+    endTurn:   sfx_endTurn,
+    callWork:  sfx_callWork,
+  };
+})();
+
+// Expose controls to HTML
+function toggleMusic() { Audio.toggleMusic(); }
+function toggleSfx()   { Audio.toggleSfx(); }
+function setMusicVol(v){ Audio.setMusicVol(v); }
+function setSfxVol(v)  { Audio.setSfxVol(v); }
 
 // ═══════════════════════════════════════════
 //  START
