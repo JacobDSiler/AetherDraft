@@ -415,6 +415,36 @@ input[type=range].ac-slider::-webkit-slider-thumb:hover{transform:scale(1.3);}
   background:none;color:rgba(200,149,42,.4);cursor:pointer;border-radius:2px;
   transition:all .18s;}
 #btn-open-commits:hover{border-color:rgba(200,149,42,.5);color:rgba(200,149,42,.8);}
+
+/* ── SNAPPY UX ── */
+#turn-flash{position:fixed;inset:0;z-index:450;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;opacity:0;}
+#turn-flash.fire{animation:turnFlash .8s ease forwards;}
+@keyframes turnFlash{0%{opacity:0;}25%{opacity:1;}65%{opacity:1;}100%{opacity:0;}}
+#turn-flash-inner{font-family:'Cinzel Decorative',cursive;font-size:32px;letter-spacing:4px;
+  background:linear-gradient(90deg,var(--gold),var(--brass));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 24px rgba(200,149,42,.5));}
+
+.elem-pick-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.pick-label{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:rgba(240,228,200,.5);}
+.pick-progress{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(200,149,42,.45);margin-left:4px;}
+.elem-pill{font-family:'Josefin Sans',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  padding:5px 12px;border-radius:2px;cursor:pointer;border:1px solid;transition:all .15s;background:rgba(14,9,3,.9);}
+.elem-pill:hover{transform:scale(1.06);}
+.elem-pill.sul{color:var(--sul);border-color:rgba(255,107,53,.45);}.elem-pill.sul:hover{background:rgba(255,107,53,.12);}
+.elem-pill.sal{color:var(--sal);border-color:rgba(122,176,204,.45);}.elem-pill.sal:hover{background:rgba(122,176,204,.12);}
+.elem-pill.mer{color:var(--mer);border-color:rgba(184,158,208,.45);}.elem-pill.mer:hover{background:rgba(184,158,208,.12);}
+.elem-pill.pri{color:var(--pri);border-color:rgba(232,200,75,.45);}.elem-pill.pri:hover{background:rgba(232,200,75,.12);}
+
+.gw-advance-btn{width:100%;margin-top:6px;padding:6px 0;font-family:'Cinzel',serif;font-size:9px;
+  letter-spacing:2px;text-transform:uppercase;background:linear-gradient(90deg,rgba(200,149,42,.18),rgba(200,149,42,.08));
+  border:1px solid rgba(200,149,42,.45);color:var(--gold);cursor:pointer;border-radius:2px;transition:all .2s;}
+.gw-advance-btn:hover{background:linear-gradient(90deg,rgba(200,149,42,.32),rgba(200,149,42,.18));box-shadow:0 0 12px rgba(200,149,42,.25);}
+.gw-advance-btn:disabled{opacity:.3;cursor:not-allowed;}
+.gw-advance-btn:disabled:hover{background:linear-gradient(90deg,rgba(200,149,42,.18),rgba(200,149,42,.08));box-shadow:none;}
+.gw-decoy-btn{border-color:rgba(184,158,208,.35);color:var(--mer);background:rgba(184,158,208,.06);}
+.gw-decoy-btn:hover{background:rgba(184,158,208,.15);box-shadow:0 0 10px rgba(184,158,208,.2);}
 </style>
 </head>
 <body>
@@ -542,16 +572,17 @@ input[type=range].ac-slider::-webkit-slider-thumb:hover{transform:scale(1.3);}
     </div>
   </div>
 
+<!-- TURN FLASH -->
+<div id="turn-flash"><div id="turn-flash-inner">YOUR TURN</div></div>
+
   <!-- ACTION BAR -->
   <div id="actbar">
-    <button class="btn pri" id="btn-draw" onclick="doDraw()">Draw</button>
     <button class="btn mer" id="btn-tx" onclick="startTransmute()" disabled>Transmute</button>
-    <button class="btn" id="btn-advance" onclick="promptAdvance()" disabled>Advance Work</button>
     <button class="btn danger" id="btn-corrupt" onclick="promptCorrupt()" disabled>Corrupt</button>
     <button class="btn gambit" id="btn-gambit" onclick="doGambit()" disabled>Gambit</button>
-    <button class="btn" id="btn-end" onclick="endTurn()" disabled>End Turn</button>
+    <button class="btn pri" id="btn-end" onclick="endTurn()" disabled>End Turn</button>
     <button class="btn danger" id="btn-call" onclick="callWork()" disabled>Call Work 🔒</button>
-    <div id="hint">Draw cards to begin your turn.</div>
+    <div id="hint">Your turn is starting…</div>
   </div>
 
 </div>
@@ -787,8 +818,8 @@ function makePlayer(isHuman) {
 let G = {
   round:1,
   turn:HUMAN,          // whose turn
-  phase:'draw',
-  drawnThisTurn:false,
+  phase:'play',       // always in play phase when it's the human's turn
+  drawnThisTurn:false, // kept for compatibility but managed by startPlayerTurn
   transmuteUsed:false,
   txMode:false,
   txCard:null,         // uid of card selected for sacrifice
@@ -850,18 +881,18 @@ function init() {
   P().aether=3; E().aether=3;
 
   renderAll();
-  setPhase('draw');
-  log('The game of Aetherdraft begins. Draw to start.','imp');
+  setPhase('play'); // start in play phase — auto-draw fires after modal
+  log('The game of Aetherdraft begins.','imp');
   log(`Your Great Work: <strong style="color:var(--gold)">${P().realWork.name}</strong>`);
   log(`Stage I requires: ${costStr(P().realWork.stages[0].cost)}`);
 
   showModal('Aetherdraft — Earned Alchemy',
     `Your secret Great Work is <strong style="color:var(--gold)">${P().realWork.name}</strong>.<br><br>
-    Complete 3 stages in order by spending elements.<br>
-    Gain elements through <strong>Transmutation</strong> — sacrifice a card from your hand to extract its element.<br><br>
+    Complete 3 stages in order by spending elements. Gain elements by sacrificing cards via the <strong>Transmute</strong> button or the <strong>Sacrifice</strong> button in any card's detail view.<br><br>
+    Advance Work buttons appear directly on your Great Work cards in the sidebar — no modal needed.<br><br>
     Your <strong>Decoy Work</strong> sits beside it face-down. Advance it to mislead your opponent.<br><br>
     <em style="color:rgba(240,228,200,.45)">Stage I: ${P().realWork.stages[0].desc}</em>`,
-    [{text:'Begin the Work', fn:closeModal}]);
+    [{text:'Begin the Work', fn:() => { closeModal(); startPlayerTurn(); }}]);
 }
 
 function costStr(costObj) {
@@ -884,40 +915,50 @@ function spendCost(elemObj, costObj) {
 // ═══════════════════════════════════════════
 function setPhase(ph) {
   G.phase = ph;
-  const pn={draw:'Draw Phase',play:'Play Phase'};
+  const pn = {draw:'Drawing…', play:'Play Phase'};
   document.getElementById('phase-lbl').textContent = G.turn===HUMAN ? 'Your Turn' : 'Adversary Turn';
   document.getElementById('round-lbl').textContent = `Round ${G.round} · ${pn[ph]||ph}`;
   document.getElementById('round-big').textContent = G.round;
 
   const isPlay = ph==='play' && G.turn===HUMAN;
-  const isHuman = G.turn===HUMAN;
-  document.getElementById('btn-draw').disabled   = ph!=='draw'||!isHuman||G.drawnThisTurn;
-  document.getElementById('btn-tx').disabled      = !isPlay||G.transmuteUsed;
-  document.getElementById('btn-advance').disabled = !isPlay||G.advanceUsed;
-  document.getElementById('btn-corrupt').disabled = !isPlay||!P().field.find(c=>c.effect==='corrupt');
-  document.getElementById('btn-gambit').disabled  = !isPlay||G.gambitsUsed[HUMAN];
-  document.getElementById('btn-end').disabled     = ph==='draw'||!isHuman;
-  document.getElementById('btn-call').disabled    = !canCall();
-
-  // Update Call Work label
+  document.getElementById('btn-tx').disabled      = !isPlay || G.transmuteUsed;
+  document.getElementById('btn-corrupt').disabled = !isPlay || !P().field.find(c=>c.effect==='corrupt');
+  document.getElementById('btn-gambit').disabled  = !isPlay || G.gambitsUsed[HUMAN];
+  document.getElementById('btn-end').disabled     = !isPlay;
   const cb = document.getElementById('btn-call');
+  cb.disabled = !canCall();
   cb.textContent = G.callUsed ? 'Call Work ✗' : canCall() ? 'Call Work' : 'Call Work 🔒';
 
-  if(ph==='draw'&&isHuman) setHint('Draw 2 cards to begin your turn.');
-  else if(ph==='play'&&isHuman) setHint('Click any card to inspect it. Play or Sacrifice from the card detail view.');
+  if(isPlay) setHint('Click a card to inspect · Advance Work buttons in sidebar · Transmute to gain elements.');
 }
 
 // ═══════════════════════════════════════════
-//  DRAW
+//  TURN START — auto-draw + flash
 // ═══════════════════════════════════════════
+function startPlayerTurn() {
+  G.turn = HUMAN;
+  G.transmuteUsed = false;
+  G.advanceUsed = false;
+  G.suitPlayedThisTurn = null;
+  selectedCardUid = null;
+  cancelTransmute();
+
+  // Flash "YOUR TURN"
+  const fl = document.getElementById('turn-flash');
+  fl.classList.remove('fire');
+  void fl.offsetWidth; // reflow to restart animation
+  fl.classList.add('fire');
+
+  // Auto-draw after brief flash
+  setTimeout(() => doDraw(), 400);
+}
 function doDraw() {
-  if(G.turn!==HUMAN||G.drawnThisTurn) return;
+  // Auto-draw: called programmatically, not by button
   Audio.wake();
   Audio.draw();
-  drawCard(P(),2);
-  G.drawnThisTurn=true;
+  drawCard(P(), 2);
   const bonus = P().field.filter(c=>c.effect==='aether_gen').length;
-  const aethGain = 2+bonus;
+  const aethGain = 2 + bonus;
   P().aether += aethGain;
 
   // Hailer effect
@@ -928,8 +969,8 @@ function doDraw() {
       log(`The Hailer — you discard ${d.name}.`,'bad');
     }
   }
-  log(`Drew 2 cards. +${aethGain} Aether. (${P().aether} total)`);
-  G.suitPlayedThisTurn=null;
+  log(`Turn ${G.round}: drew 2 cards, +${aethGain} Aether. (${P().aether} total)`);
+  G.suitPlayedThisTurn = null;
   setPhase('play');
   renderAll();
 }
@@ -1039,16 +1080,17 @@ function zoomTransmute() {
   if(G.transmuteUsed){ closeZoom(); setHint('Transmutation already used this turn.'); return; }
   if(P().elements[card.suit] >= MAX_ELEM){ closeZoom(); setHint(`${SN[card.suit]} is already at cap (${MAX_ELEM}).`); return; }
 
+  // Instant sacrifice — no panel, no confirm step
   closeZoom();
-  // Pre-open transmute panel with this card already selected
-  G.txMode=true;
-  G.txCard=card.uid;
-  document.getElementById('tx-panel').style.display='block';
-  document.getElementById('tx-hint').style.display='inline';
-  document.getElementById('tx-confirm').disabled=false;
-  document.getElementById('tx-info').innerHTML=
-    `Sacrifice <strong style="color:var(--gold)">${card.name}</strong> → extract 1 ${SUITS[card.suit]} <span style="color:${SC[card.suit]}">${SN[card.suit]}</span>`;
-  renderHand();
+  P().hand = P().hand.filter(c=>c.uid !== card.uid);
+  P().discard.push(card);
+  addElem(P(), card.suit, 1);
+  Audio.transmute();
+  setTimeout(() => Audio.elemGain(card.suit), 500);
+  G.transmuteUsed = true;
+  log(`Sacrificed ${card.name} → +1 ${SUITS[card.suit]} ${SN[card.suit]}.`, 'good');
+  setPhase('play');
+  renderAll();
 }
 
 // ─────────────────────────────────────────────
@@ -1341,66 +1383,34 @@ function cancelTransmute() {
 // ═══════════════════════════════════════════
 //  ADVANCE GREAT WORK
 // ═══════════════════════════════════════════
-function promptAdvance() {
-  if(G.advanceUsed||G.phase!=='play'||G.turn!==HUMAN) return;
-  const realStage=P().realStage;
-  const decoyStage=P().decoyStage;
-  const realWork=P().realWork;
-  const decoyWork=P().decoyWork;
-
-  const btns = [];
-  if(realStage<3){
-    const cost=realWork.stages[realStage].cost;
-    const canAfford=canAffordCost(P().elements,cost);
-    btns.push({
-      text:`Real Work — Stage ${realStage+1}: ${realWork.stages[realStage].name} (${costStrPlain(cost)})`,
-      fn: canAfford ? ()=>{advanceReal();closeModal();} : ()=>{closeModal();setHint('Not enough elements for that stage.');},
-      disabled: !canAfford
-    });
-  }
-  if(decoyStage<3){
-    const cost=decoyWork.stages[decoyStage].cost;
-    const canAfford=canAffordCost(P().elements,cost);
-    btns.push({
-      text:`Decoy Work — Stage ${decoyStage+1} (Bluff, costs ${costStrPlain(cost)})`,
-      fn: canAfford ? ()=>{advanceDecoy();closeModal();} : ()=>{closeModal();setHint('Not enough elements for decoy.');},
-      disabled: !canAfford
-    });
-  }
-
-  if(btns.length===0){
-    setHint('Both Works fully advanced, or cannot afford current stage.'); return;
-  }
-
-  btns.push({text:'Cancel', fn:closeModal});
-  const nextDesc = realStage<3 ? realWork.stages[realStage].desc : 'Work complete!';
-  showModal('Advance the Great Work',
-    `<em style="color:rgba(240,228,200,.5)">Spending elements to advance a stage is a turn action. Your opponent sees a stage token appear but not its contents.</em><br><br>Next real stage: <strong style="color:var(--gold)">${nextDesc}</strong>`,
-    btns);
-}
+// promptAdvance replaced by inline gw-advance-btn buttons in renderGW()
 
 function advanceReal() {
-  const stage=P().realStage;
-  const cost=P().realWork.stages[stage].cost;
-  if(!canAffordCost(P().elements,cost)){setHint('Cannot afford.'); return;}
-  spendCost(P().elements,cost);
+  if(G.advanceUsed){ setHint('Already advanced a Work stage this turn.'); return; }
+  const stage = P().realStage;
+  if(stage >= 3) return;
+  const cost = P().realWork.stages[stage].cost;
+  if(!canAffordCost(P().elements, cost)){ setHint('Not enough elements for that stage.'); return; }
+  spendCost(P().elements, cost);
   P().realStage++;
-  G.advanceUsed=true;
+  G.advanceUsed = true;
   Audio.advance();
   Audio.setTension(P().realStage / 3);
-  log(`Great Work: Stage ${stage+1} complete — ${P().realWork.stages[stage].name}.`,'imp');
+  log(`⚗ Great Work: Stage ${stage+1} complete — <strong>${P().realWork.stages[stage].name}</strong>.`, 'imp');
   renderAll();
   checkWin();
 }
 
 function advanceDecoy() {
-  const stage=P().decoyStage;
-  const cost=P().decoyWork.stages[stage].cost;
-  if(!canAffordCost(P().elements,cost)){setHint('Cannot afford.'); return;}
-  spendCost(P().elements,cost);
+  if(G.advanceUsed){ setHint('Already advanced a Work stage this turn.'); return; }
+  const stage = P().decoyStage;
+  if(stage >= 3) return;
+  const cost = P().decoyWork.stages[stage].cost;
+  if(!canAffordCost(P().elements, cost)){ setHint('Not enough elements for decoy stage.'); return; }
+  spendCost(P().elements, cost);
   P().decoyStage++;
-  G.advanceUsed=true;
-  log(`Decoy advanced to Stage ${P().decoyStage} — keeping the adversary guessing.`);
+  G.advanceUsed = true;
+  log(`🎭 Decoy advanced to Stage ${P().decoyStage} — keeping the adversary guessing.`);
   renderAll();
 }
 
@@ -1474,11 +1484,11 @@ function resolveGambit() {
 //  CALL WORK
 // ═══════════════════════════════════════════
 function canCall() {
-  if(!G.turn===HUMAN||G.phase!=='play') return false;
+  if(G.turn !== HUMAN || G.phase !== 'play') return false;
   if(G.callUsed) return false;
-  if(G.round<5) return false;
-  if(G.enemyCardsPlayed<5) return false;
-  if(G.intelUsed<1) return false;
+  if(G.round < 5) return false;
+  if(G.enemyCardsPlayed < 5) return false;
+  if(G.intelUsed < 1) return false;
   return true;
 }
 
@@ -1525,16 +1535,13 @@ function resolveCall(id) {
 function endTurn() {
   if(G.turn!==HUMAN) return;
   Audio.endTurn();
-  // draw-one bonus
   if(P()._drawOneTurn){ drawCard(P(),1); P()._drawOneTurn=false; }
-  G.transmuteUsed=false; G.advanceUsed=false; G.drawnThisTurn=false;
-  G.suitPlayedThisTurn=null; selectedCardUid=null; cancelTransmute();
   checkWin();
   log('You end your turn.','imp');
-  G.turn=AI;
+  G.turn = AI;
   setPhase('ai');
   renderAll();
-  setTimeout(doAI,900);
+  setTimeout(doAI, 900);
 }
 
 // ═══════════════════════════════════════════
@@ -1569,7 +1576,7 @@ function winGame(winner, method) {
       ? `The adversary's deck and hand are exhausted. Dissolution is complete.`
       : `Your deck and hand are exhausted. The process dissolves.`,
   };
-  ['btn-draw','btn-tx','btn-advance','btn-corrupt','btn-gambit','btn-end','btn-call'].forEach(id=>{
+  ['btn-tx','btn-corrupt','btn-gambit','btn-end','btn-call'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.disabled=true;
   });
   if(winner===HUMAN) Audio.win(); else Audio.defeat();
@@ -1653,12 +1660,10 @@ function doAI() {
 
     document.getElementById('ai-bar').style.display='none';
     G.round++;
-    G.turn=HUMAN; G.drawnThisTurn=false; G.transmuteUsed=false; G.advanceUsed=false;
-    G.suitPlayedThisTurn=null;
-    if(P()._drawOneTurn){drawCard(P(),1);P()._drawOneTurn=false;}
-    setPhase('draw');
-    log('─ Your turn. Draw cards.','imp');
+    if(P()._drawOneTurn){ drawCard(P(),1); P()._drawOneTurn=false; }
+    log('─ Your turn.','imp');
     renderAll();
+    startPlayerTurn();
   },1600);
 }
 
@@ -1902,29 +1907,63 @@ function renderGW(id, who, isEnemy){
   }
   zone.appendChild(dotCol);
 
-  // Info
+  // Info + inline advance buttons
   const info=document.createElement('div');
   info.className='gw-info';
-  const curStage=who.realStage<3?who.realWork.stages[who.realStage]:null;
-  const canAdv=curStage&&canAffordCost(who.elements,curStage.cost);
+  const curStage = who.realStage < 3 ? who.realWork.stages[who.realStage] : null;
+  const canAdvReal = G.phase==='play' && G.turn===HUMAN && !G.advanceUsed && curStage && canAffordCost(who.elements, curStage.cost);
+  const decoyStage = who.decoyStage < 3 ? who.decoyWork.stages[who.decoyStage] : null;
+  const canAdvDecoy = G.phase==='play' && G.turn===HUMAN && !G.advanceUsed && decoyStage && canAffordCost(who.elements, decoyStage.cost);
+
   info.innerHTML=`
     <div class="gw-name">${who.realWork.name}</div>
-    <div class="gw-stage-lbl">${who.realStage<3?`Stage ${who.realStage+1}: ${curStage.name}`:'✦ Complete'}</div>
-    <div class="gw-cost">${curStage?costStr(curStage.cost):'All stages done!'}</div>
-    ${who.decoyStage>0?`<div style="font-family:'Josefin Sans';font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(184,158,208,.4);margin-top:3px;">Decoy: Stage ${who.decoyStage}/3</div>`:''}
+    <div class="gw-stage-lbl">${who.realStage<3 ? `Stage ${who.realStage+1}: ${curStage.name}` : '✦ Complete'}</div>
+    <div class="gw-cost">${curStage ? costStr(curStage.cost) : 'All stages done!'}</div>
+    ${who.decoyStage>0 ? `<div style="font-family:'Josefin Sans';font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(184,158,208,.4);margin-top:2px;">Decoy: Stage ${who.decoyStage}/3</div>` : ''}
   `;
+
+  // Real Work advance button
+  if(who.realStage < 3) {
+    const advBtn = document.createElement('button');
+    advBtn.className = 'gw-advance-btn';
+    advBtn.disabled = !canAdvReal;
+    advBtn.textContent = canAdvReal
+      ? `⚗ Advance → Stage ${who.realStage+1}`
+      : `Stage ${who.realStage+1}: ${costStrPlain(curStage.cost)}`;
+    advBtn.onclick = () => { advanceReal(); };
+    info.appendChild(advBtn);
+  }
+
+  // Decoy advance button
+  if(who.decoyStage < 3) {
+    const decBtn = document.createElement('button');
+    decBtn.className = 'gw-advance-btn gw-decoy-btn';
+    decBtn.disabled = !canAdvDecoy;
+    decBtn.textContent = canAdvDecoy
+      ? `🎭 Advance Decoy → Stage ${who.decoyStage+1}`
+      : `Decoy Stage ${who.decoyStage+1}: ${costStrPlain(decoyStage.cost)}`;
+    decBtn.onclick = () => { advanceDecoy(); };
+    info.appendChild(decBtn);
+  }
+
   zone.appendChild(info);
   c.appendChild(zone);
 }
 
 // ═══════════════════════════════════════════
-//  CHOICE MODALS — closure-based, no eval/strings
+//  CHOICE — inline hint-bar, no modals
 // ═══════════════════════════════════════════
 function showSuitChoice(title, n, cb) {
-  showModal(title, '', Object.keys(SUITS).map(s => ({
-    text: `${SUITS[s]} ${SN[s]}`,
-    fn: () => { closeModal(); cb(s); }
-  })));
+  const pills = Object.keys(SUITS).map(s => {
+    const cls = ELEM_CLASS[s];
+    return `<button class="elem-pill ${cls}" onclick="_suitPickInline('${s}')">${SUITS[s]} ${SN[s]}</button>`;
+  }).join('');
+  setHint(`<div class="elem-pick-row"><span class="pick-label">${title}</span>${pills}</div>`);
+  window._suitPickCb = cb;
+}
+function _suitPickInline(s) {
+  setHint('Click a card to inspect · Advance Work buttons in sidebar · Transmute to gain elements.');
+  if(window._suitPickCb) { window._suitPickCb(s); window._suitPickCb = null; }
 }
 
 let _twoElemPicks = [];
@@ -1933,27 +1972,42 @@ let _twoElemCb = null;
 
 function showTwoElemChoice(title, n, cb) {
   _twoElemPicks = []; _twoElemNeeded = n; _twoElemCb = cb;
-  _twoElemRender(title);
+  _renderElemPills(title);
 }
 
-function _twoElemRender(title) {
-  const picked = _twoElemPicks.map(s => SN[s]).join(' + ') || 'none yet';
-  const ready = _twoElemPicks.length >= _twoElemNeeded;
-  const pickBtns = Object.keys(SUITS).map(s => ({
-    text: `${SUITS[s]} ${SN[s]}`,
-    fn: () => {
-      if(_twoElemPicks.length < _twoElemNeeded) _twoElemPicks.push(s);
-      _twoElemRender(title);
-    }
-  }));
-  const confirmBtns = ready ? [{
-    text: `Confirm (${_twoElemPicks.map(s => SN[s]).join(', ')})`,
-    fn: () => { closeModal(); if(_twoElemCb) _twoElemCb([..._twoElemPicks]); }
-  }] : [];
-  showModal(title,
-    `Chosen: <strong style="color:var(--gold)">${picked}</strong> (${_twoElemPicks.length}/${_twoElemNeeded})`,
-    [...pickBtns, ...confirmBtns]
-  );
+function _renderElemPills(title) {
+  const remaining = _twoElemNeeded - _twoElemPicks.length;
+  const pickedStr = _twoElemPicks.length
+    ? _twoElemPicks.map(s=>`<span style="color:${SC[s]}">${SUITS[s]}</span>`).join(' ')
+    : '';
+
+  if(remaining <= 0) {
+    // Auto-confirm when all picks made
+    setHint(`<span class="pick-label">✓ Confirmed:</span> ${pickedStr}`);
+    setTimeout(() => {
+      setHint('Click a card to inspect · Advance Work buttons in sidebar · Transmute to gain elements.');
+      if(_twoElemCb) _twoElemCb([..._twoElemPicks]);
+    }, 400);
+    return;
+  }
+
+  const pills = Object.keys(SUITS).map(s =>
+    `<button class="elem-pill ${ELEM_CLASS[s]}" onclick="_pickElemInline('${s}')">${SUITS[s]} ${SN[s]}</button>`
+  ).join('');
+
+  setHint(`<div class="elem-pick-row">
+    <span class="pick-label">${title}</span>
+    ${pickedStr ? `<span style="margin:0 4px;color:rgba(240,228,200,.4);">→</span>${pickedStr}` : ''}
+    <span class="pick-progress">(${_twoElemPicks.length}/${_twoElemNeeded})</span>
+    ${pills}
+  </div>`);
+}
+
+function _pickElemInline(s) {
+  if(_twoElemPicks.length < _twoElemNeeded) {
+    _twoElemPicks.push(s);
+    _renderElemPills(`Choose ${_twoElemNeeded} elements:`);
+  }
 }
 
 function showConvertModal() {
@@ -2045,6 +2099,23 @@ function showCombo(text){
 //  COMMIT LOG
 // ═══════════════════════════════════════════
 const COMMITS = [
+  {
+    hash: 'f8e1a3c',
+    tag: 'feat',
+    msg: 'feat: snappy UX pass — auto-draw, inline GW buttons, instant sacrifice, pill element pickers',
+    desc: `Eliminated all friction from routine game actions. Every common decision is now 1–2 clicks with no modal interruption.
+
+Auto-draw: The Draw button and draw phase have been removed entirely. Turn start is now handled by startPlayerTurn() — fires a "YOUR TURN" flash animation, then auto-draws 2 cards + gains Aether after a 400ms delay. This fires on game start (after dismissing the intro modal), after each AI turn, and handles the draw-one bonus from Narrow-Gauge Express automatically.
+
+Instant sacrifice (Transmute): The Sacrifice button in the card zoom overlay now executes immediately — no TX panel, no confirm step. Card is removed from hand, element added, SFX fires, done. The manual Transmute button in the action bar remains as a fallback for keyboard-style play.
+
+Inline Great Work buttons: advanceReal() and advanceDecoy() buttons now appear directly on the Great Work cards in the left sidebar, rendered by renderGW(). They show the stage name and cost when disabled, and a prominent "⚗ Advance" label when affordable. One click — no modal. promptAdvance() removed entirely.
+
+Inline element pickers: showTwoElemChoice() and showSuitChoice() no longer open modals. Element picks now render as coloured pill buttons directly in the hint bar. Auto-confirms when the required number of picks is reached.
+
+Action bar cleanup: Draw and Advance Work buttons removed. Remaining: Transmute (fallback), Corrupt, Gambit, End Turn, Call Work.`,
+    files: ['startPlayerTurn()', 'doDraw()', 'zoomTransmute()', 'renderGW()', 'advanceReal()', 'advanceDecoy()', 'showTwoElemChoice()', 'showSuitChoice()', 'setPhase()', 'Action Bar HTML']
+  },
   {
     hash: 'a4f9c2e',
     tag: 'feat',
