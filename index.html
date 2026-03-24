@@ -564,7 +564,7 @@ input[type=range].ac-slider::-webkit-slider-thumb:hover{transform:scale(1.3);}
           <p style="margin-bottom:5px;"><span style="color:var(--gold);">Elements</span><br>Sacrifice a card via Transmute to extract its element. Max 4 of each. Spend elements to advance your Great Work.</p>
           <p style="margin-bottom:5px;"><span style="color:var(--gold);">Great Work</span><br>3 stages: Calcination → Dissolution → Coagulation. Each stage costs elements. Must complete in order.</p>
           <p style="margin-bottom:5px;"><span style="color:var(--gold);">Bluffing</span><br>You hold a Real Work + a Decoy. Both sit face-down. Advance either to mislead your opponent.</p>
-          <p style="margin-bottom:5px;"><span style="color:var(--gold);">Keywords</span><br><span style="color:var(--pri);">Catalyse</span> — costs 1 less if same suit played last turn<br><span style="color:var(--mer);">Reaction</span> — bonus if diff suit played same turn<br><span style="color:var(--sul);">Corrupt</span> — regress opponent stage<br><span style="color:var(--sal);">Spy</span> — reveal one opponent stage</p>
+          <p style="margin-bottom:5px;"><span style="color:var(--gold);">Keywords</span><br><span style="color:var(--pri);">Catalyse</span> — costs 1 less if same suit played last turn<br><span style="color:var(--mer);">Reaction</span> — bonus if diff suit played same turn<br><span style="color:var(--sul);">Corrupt</span> — regress opponent stage (Saboteur consumed on use)<br><span style="color:var(--sal);">Spy</span> — reveal one opponent stage</p>
           <p style="margin-bottom:5px;"><span style="color:var(--pri);">Philosopher's Gambit</span><br>Discard entire hand (min 3) → gain 3 elements any mix. Once per game. Announced publicly.</p>
           <p style="color:rgba(200,149,42,.35);font-style:italic;margin-top:8px;">"Every hand at an Aetherdraft table is turning lead into gold."</p>
         </div>
@@ -733,7 +733,7 @@ const CARDS = [
    kw:'',rules:'Instant: opponent discards 2 cards.',
    effect:'discard_two',flavor:'"Fires in Tageta higher than usual — especially the eastern side."',wit:0,res:0,fort:0},
   {id:'corrupt_card',name:'Saboteur',type:'Operative',suit:'sulphur',cost:4,glyph:'🗡️',
-   kw:'Corrupt',rules:'Corrupt: regress one of opponent\'s completed Great Work stages by 1.',
+   kw:'Corrupt',rules:'Corrupt: regress one of opponent\'s completed Great Work stages by 1. One use — the Saboteur is removed from your field after activating.',
    effect:'corrupt',flavor:'"They don\'t stop you building. They make you build it twice."',wit:3,res:1,fort:0},
   {id:'hailer',name:'The Hailer',type:'Calamity Machine',suit:'sulphur',cost:5,glyph:'🤖',
    kw:'',rules:'Permanent: opponent discards 1 card per round while in play.',
@@ -1419,29 +1419,40 @@ function advanceDecoy() {
 // ═══════════════════════════════════════════
 function promptCorrupt() {
   if(G.turn!==HUMAN||G.phase!=='play') return;
-  if(!P().field.find(c=>c.effect==='corrupt')){setHint('No Saboteur in field.');return;}
-  if(E().realStage===0&&E().decoyStage===0){setHint('Adversary has no stages to corrupt yet.');return;}
+  const saboteur = P().field.find(c=>c.effect==='corrupt');
+  if(!saboteur){ setHint('No Saboteur in field.'); return; }
+  if(E().realStage===0){ setHint('Adversary has no stages to corrupt yet.'); return; }
   if(E().guardianActive){
     showModal('Blocked!','The adversary has a Resolve Operative on their field. Their Work stages are shielded — destroy the operative first.',
       [{text:'Understood', fn:closeModal}]);
     return;
   }
-  if(E().negateActive){log('Adversary negated the Corruption!');E().negateActive=false;return;}
+  if(E().negateActive){ log('Adversary negated the Corruption!'); E().negateActive=false; return; }
 
-  // Corrupt real work stage if any
-  if(E().realStage>0){
-    E().realStage--;
-    Audio.corrupt();
-    log('Saboteur corrupts the adversary\'s Great Work — Stage regressed!','good');
-    showCombo('Corruption!');
-    renderAll();
-  }
+  // Corrupt real work stage — then consume the Saboteur (one use only)
+  E().realStage--;
+  P().field = P().field.filter(c=>c.uid !== saboteur.uid);
+  P().discard.push(saboteur);
+  Audio.corrupt();
+  log(`Saboteur corrupts the adversary's Great Work — Stage regressed! The operative burns their cover and withdraws.`, 'good');
+  showCombo('Corruption!');
+  setPhase('play'); // refresh Corrupt button — now disabled, saboteur gone
+  renderAll();
 }
 
 function aiCorrupt(target) {
-  if(target.guardianActive){log('Corruption blocked by Resolve Operative.','good');return;}
-  if(target.negateActive){target.negateActive=false;log('Corruption negated!','good');return;}
-  if(target.realStage>0){target.realStage--;log('Adversary corrupts your Great Work — Stage regressed!','bad');}
+  if(target.guardianActive){ log('Corruption blocked by Resolve Operative.','good'); return; }
+  if(target.negateActive){ target.negateActive=false; log('Corruption negated!','good'); return; }
+  if(target.realStage>0){
+    // Find and consume the AI's Saboteur
+    const saboteur = E().field.find(c=>c.effect==='corrupt');
+    target.realStage--;
+    if(saboteur){
+      E().field = E().field.filter(c=>c.uid !== saboteur.uid);
+      E().discard.push(saboteur);
+    }
+    log('Adversary\'s Saboteur corrupts your Great Work — Stage regressed! Their operative withdraws.','bad');
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -1579,9 +1590,23 @@ function winGame(winner, method) {
   ['btn-tx','btn-corrupt','btn-gambit','btn-end','btn-call'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.disabled=true;
   });
-  if(winner===HUMAN) Audio.win(); else Audio.defeat();
-  showModal(t[method]||'Game Over', b[method]||'',
-    [{text:'Play Again', fn:()=>location.reload()}, {text:'View Board', fn:closeModal}]);
+
+  // Stop music — let sting play clean
+  Audio.stopMusic();
+
+  if(winner===HUMAN) {
+    Audio.win();
+    // Delay modal — let the brass bloom and shimmer tail finish (~3.2s)
+    setTimeout(() => showModal(t[method]||'Victory', b[method]||'',
+      [{text:'Play Again', fn:()=>location.reload()}, {text:'View Board', fn:closeModal}]
+    ), 3200);
+  } else {
+    Audio.defeat();
+    // Delay modal — let the toll and descending line finish (~3.8s)
+    setTimeout(() => showModal(t[method]||'Defeated', b[method]||'',
+      [{text:'Play Again', fn:()=>location.reload()}, {text:'View Board', fn:closeModal}]
+    ), 3800);
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -2100,6 +2125,34 @@ function showCombo(text){
 // ═══════════════════════════════════════════
 const COMMITS = [
   {
+    hash: 'a1e8b52',
+    tag: 'fix',
+    msg: 'fix: Corruption consumes Saboteur on use — one shot per card',
+    desc: `Corruption was unlimited per turn as long as a Saboteur was on the field, making it trivially overpowered — a single Saboteur could regress the opponent back to Stage 0 in one turn.
+
+Fix: promptCorrupt() now finds the Saboteur operative, executes the corruption, then immediately removes it from P().field and pushes it to P().discard. The Corrupt button is then disabled via setPhase('play') since no Saboteur remains. One card, one use.
+
+aiCorrupt() receives the same treatment — the AI's Saboteur is consumed on activation. This also means the AI now has to decide whether to play a Saboteur knowing it will burn the card to use it, which is a genuine strategic cost.
+
+Card rules text and Codex sidebar both updated to reflect the new behaviour. The flavour of "burning their cover and withdrawing" fits the Skylark lore — a saboteur who acts can't stay in place.`,
+    files: ['promptCorrupt()', 'aiCorrupt()', 'Saboteur card rules', 'Codex sidebar']
+  },
+  {
+    hash: 'c3d7f91',
+    tag: 'fix',
+    msg: 'fix: replace beepy melody with deep brass tone, beef up win/loss stings, delay end-game modal',
+    desc: `Three audio improvements based on playtesting feedback.
+
+Melody overhaul: The sine-wave pentatonic melody was producing high-pitched beeps. Replaced with a sawtooth oscillator routed through a heavy lowpass filter (280Hz cutoff, Q 1.2), producing a warm muted brass/cello hybrid tone. Notes now use 3–7 second durations with slow bow-like attack (0.8s) and release (1.4s). Gap between notes is 5–11 seconds, making the music feel contemplative rather than busy. Harmony now uses a minor third below rather than a fifth above — adds warmth without brightness. Melody starts after 4 seconds to let the drone establish fully.
+
+Win sting: Added a low brass foundation (two sawtooth tones through lowpass) that fires before the chord bloom. Arpeggio spread slowed and extended to 8 notes. Shimmer tail extended to 6 chimes over 2 seconds.
+
+Defeat sting: Replaced the simple descending sine line with a heavy bell toll (inharmonic partials at 80Hz base) that rings for 3.5 seconds, followed by a slow descending minor brass line starting 0.8s after impact, ending with a dying boiler noise fade.
+
+Modal delay: winGame() now calls Audio.stopMusic() before playing the sting, then delays the result modal — 3.2s for win (bloom + shimmer), 3.8s for defeat (toll + descent). Players get a moment to sit with the result before the overlay appears.`,
+    files: ['scheduleMelody()', 'sfx_win()', 'sfx_defeat()', 'winGame()']
+  },
+  {
     hash: 'f8e1a3c',
     tag: 'feat',
     msg: 'feat: snappy UX pass — auto-draw, inline GW buttons, instant sacrifice, pill element pickers',
@@ -2433,51 +2486,71 @@ const Audio = (() => {
     }
     scheduleRhythm();
 
-    // Layer 3: Sparse pentatonic melody
+    // Layer 3: Deep slow brass/cello melody — low, warm, not beepy
     function scheduleMelody() {
       if(!musicRunning) return;
       const c = getCtx();
-      // Pick a random note from the pentatonic, biased toward lower octave when calm
-      const bias = Math.floor(tensionLevel * 8);
-      const pool = PENTA.slice(bias, bias + 7);
+
+      // Use only the bottom two octaves — deep and warm
+      const deepPenta = [
+        55, 65.41, 77.78, 87.31, 103.83,  // A1 octave
+        110, 130.81, 155.56, 174.61, 207.65 // A2 octave
+      ];
+      // At higher tension allow up to A3
+      const pool = tensionLevel > 0.5
+        ? [...deepPenta, 220, 261.63, 311.13]
+        : deepPenta;
+
       const freq = pool[Math.floor(Math.random()*pool.length)];
-      const vol  = 0.06 + tensionLevel*0.05;
-      const dur  = 1.2 + Math.random()*2.0;
+      const vol  = 0.07 + tensionLevel*0.04;
+      const dur  = 3.0 + Math.random()*4.0; // very long notes
 
       const o = c.createOscillator();
       const g = c.createGain();
-      const rev = reverb(musicGain, 0.7);
-      o.type = 'sine';
-      o.frequency.value = freq;
-      // Slight pitch wobble (vibrato)
+      const rev = reverb(musicGain, 0.75);
+
+      // Sawtooth through heavy lowpass = warm muted brass/cello hybrid
+      o.type = 'sawtooth';
+      const filt = c.createBiquadFilter();
+      filt.type = 'lowpass';
+      filt.frequency.value = 280 + tensionLevel * 200; // opens up with tension
+      filt.Q.value = 1.2;
+
+      // Very slow vibrato — barely perceptible
       const vib = c.createOscillator();
       const vibg = c.createGain();
-      vib.frequency.value = 4.5 + Math.random()*1.5;
-      vibg.gain.value = freq * 0.004;
+      vib.frequency.value = 2.8 + Math.random()*0.8;
+      vibg.gain.value = freq * 0.006;
       vib.connect(vibg); vibg.connect(o.frequency);
-      envelope(g, c.currentTime, 0.3, vol, 0.2, dur-0.8, 0.8);
-      o.connect(g); g.connect(rev.input); g.connect(rev.dry);
-      rev.connect(musicGain);
-      o.start(); o.stop(c.currentTime + dur + 0.8);
-      vib.start(); vib.stop(c.currentTime + dur + 0.8);
 
-      // Sometimes add a harmony a perfect fifth above
-      if(Math.random() < 0.25 + tensionLevel*0.2) {
+      // Slow bow-like attack, long sustain, slow release
+      envelope(g, c.currentTime, 0.8, vol, 0.3, dur - 1.5, 1.4);
+
+      o.connect(filt); filt.connect(g);
+      g.connect(rev.input); g.connect(rev.dry);
+      rev.connect(musicGain);
+      o.start(); o.stop(c.currentTime + dur + 1.4);
+      vib.start(); vib.stop(c.currentTime + dur + 1.4);
+
+      // Occasional very quiet harmony a minor third below (adds richness, not brightness)
+      if(Math.random() < 0.3) {
         const o2 = c.createOscillator();
         const g2 = c.createGain();
-        o2.type = 'sine';
-        o2.frequency.value = freq * 1.5;
-        envelope(g2, c.currentTime, 0.5, vol*0.4, 0.2, dur-0.8, 1.0);
-        o2.connect(g2); g2.connect(musicGain);
-        o2.start(); o2.stop(c.currentTime + dur + 1.0);
+        const f2 = c.createBiquadFilter();
+        o2.type = 'sawtooth';
+        o2.frequency.value = freq * 0.84; // minor third below
+        f2.type = 'lowpass'; f2.frequency.value = 220; f2.Q.value = 1.0;
+        envelope(g2, c.currentTime + 0.4, 1.0, vol * 0.35, 0.2, dur - 2.0, 1.5);
+        o2.connect(f2); f2.connect(g2); g2.connect(musicGain);
+        o2.start(); o2.stop(c.currentTime + dur + 1.5);
       }
 
-      // Gap before next note — longer when calm, tighter with tension
-      const gap = (2.5 - tensionLevel*1.2) + Math.random() * (3.5 - tensionLevel*1.5);
-      melodyTimer = setTimeout(scheduleMelody, Math.max(600, gap*1000));
+      // Long gap — music should feel like it's thinking, not playing constantly
+      const gap = (5.0 - tensionLevel*2.0) + Math.random() * (6.0 - tensionLevel*2.0);
+      melodyTimer = setTimeout(scheduleMelody, Math.max(1500, gap*1000));
     }
-    // Start melody after a short intro silence
-    melodyTimer = setTimeout(scheduleMelody, 2200);
+    // Start melody after longer intro — let drone establish first
+    melodyTimer = setTimeout(scheduleMelody, 4000);
   }
 
   function stopMusic() {
@@ -2691,45 +2764,79 @@ const Audio = (() => {
   function sfx_win() {
     if(sfxMuted) return;
     const c = getCtx(); const now = c.currentTime;
-    const rev = reverb(sfxGain, 0.7);
-    // Major chord bloom — A major arpeggiated
-    const chord = [220, 277.18, 329.63, 440, 554.37, 659.26, 880];
+    const rev = reverb(sfxGain, 0.72);
+
+    // Low brass foundation first — two beats
+    [110, 165].forEach((f, i) => {
+      const o = c.createOscillator(); const g = c.createGain();
+      const filt = c.createBiquadFilter();
+      o.type = 'sawtooth'; o.frequency.value = f;
+      filt.type = 'lowpass'; filt.frequency.value = 500;
+      g.gain.setValueAtTime(0, now + i*0.18);
+      g.gain.linearRampToValueAtTime(0.22, now + i*0.18 + 0.08);
+      g.gain.linearRampToValueAtTime(0.10, now + i*0.18 + 0.4);
+      g.gain.linearRampToValueAtTime(0, now + i*0.18 + 1.2);
+      o.connect(filt); filt.connect(g); g.connect(rev.input); g.connect(rev.dry);
+      o.start(now + i*0.18); o.stop(now + i*0.18 + 1.3);
+    });
+
+    // Rising arpeggiated chord bloom starting at beat 2 — A major
+    const chord = [220, 277.18, 329.63, 440, 554.37, 659.26, 880, 1108];
     chord.forEach((f, i) => {
-      const o = c.createOscillator();
-      const g = c.createGain();
+      const o = c.createOscillator(); const g = c.createGain();
       o.type = 'sine'; o.frequency.value = f;
-      const t = now + i*0.09;
+      const t = now + 0.45 + i*0.08;
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.15, t+0.1);
-      g.gain.linearRampToValueAtTime(0.08, t+0.4);
-      g.gain.linearRampToValueAtTime(0, t+2.5);
+      g.gain.linearRampToValueAtTime(0.14 - i*0.012, t + 0.08);
+      g.gain.linearRampToValueAtTime(0.07 - i*0.006, t + 0.35);
+      g.gain.linearRampToValueAtTime(0, t + 2.8);
       o.connect(g); g.connect(rev.input); g.connect(rev.dry);
-      o.start(t); o.stop(t+2.6);
+      o.start(t); o.stop(t + 2.9);
     });
     rev.connect(sfxGain);
-    // Shimmer tail
-    for(let i=0;i<4;i++) setTimeout(() => sfx_elemGain('prima'), 400 + i*180);
+
+    // Shimmer tail — 6 chimes spread over 2 seconds
+    for(let i=0;i<6;i++) setTimeout(() => sfx_elemGain('prima'), 700 + i*280);
   }
 
   function sfx_defeat() {
     if(sfxMuted) return;
     const c = getCtx(); const now = c.currentTime;
-    const rev = reverb(sfxGain, 0.8);
-    // Minor dissolution — descending
-    const notes = [440, 415.30, 392, 369.99, 349.23, 329.63, 293.66, 220];
-    notes.forEach((f, i) => {
-      const o = c.createOscillator();
-      const g = c.createGain();
-      o.type = 'sine'; o.frequency.value = f;
-      const t = now + i*0.22;
-      const vol = 0.16 * (1 - i/notes.length);
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(vol, t+0.1);
-      g.gain.linearRampToValueAtTime(0, t+0.8);
+    const rev = reverb(sfxGain, 0.85);
+
+    // Heavy low toll — a single bell-like impact
+    const partials = [1, 2.756, 5.404];
+    const tollVols = [0.28, 0.12, 0.05];
+    partials.forEach((p, i) => {
+      const o = c.createOscillator(); const g = c.createGain();
+      o.type = 'sine'; o.frequency.value = 80 * p;
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(tollVols[i], now + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
       o.connect(g); g.connect(rev.input); g.connect(rev.dry);
-      o.start(t); o.stop(t+0.9);
+      o.start(now); o.stop(now + 3.6);
     });
+
+    // Slow descending minor line — starts after the toll
+    const notes = [220, 196, 174.61, 164.81, 146.83, 130.81, 110];
+    notes.forEach((f, i) => {
+      const o = c.createOscillator(); const g = c.createGain();
+      const filt = c.createBiquadFilter();
+      o.type = 'sawtooth'; o.frequency.value = f;
+      filt.type = 'lowpass'; filt.frequency.value = 350;
+      const t = now + 0.8 + i * 0.38;
+      const vol = 0.12 * (1 - i / (notes.length * 1.2));
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(vol, t + 0.15);
+      g.gain.linearRampToValueAtTime(0, t + 0.75);
+      o.connect(filt); filt.connect(g); g.connect(rev.input); g.connect(rev.dry);
+      o.start(t); o.stop(t + 0.85);
+    });
+
     rev.connect(sfxGain);
+
+    // Final noise fade — like a dying boiler
+    setTimeout(() => noise(sfxGain, 0.06, 0.8, 120), 2200);
   }
 
   function sfx_endTurn() {
